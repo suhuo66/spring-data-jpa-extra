@@ -64,7 +64,7 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
     }
 
     private String getQueryFromTpl(Object[] values) {
-        return FreemarkerSqlTemplates.process(getEntityName(), getMethodName(), getParams(values));
+        return ContextHolder.getBean(FreemarkerSqlTemplates.class).process(getEntityName(), getMethodName(), getParams(values));
     }
 
     private Map<String, Object> getParams(Object[] values) {

@@ -1,8 +1,5 @@
 package com.slyak.spring.jpa;
 
-import com.google.common.collect.Lists;
-import com.orange.flower.core.util.Classes;
-import com.orange.flower.core.web.Context;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.AfterAdvice;
@@ -60,15 +57,15 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
 
     private List<EntityAssembler> getEntityAssemblers(Class<?> clazz) {
         if (assemblers.isEmpty()) {
-            Collection<EntityAssembler> abs = Context.getBeansOfType(EntityAssembler.class);
+            Collection<EntityAssembler> abs = ContextHolder.getBeansOfType(EntityAssembler.class);
             if (abs.isEmpty()) {
                 return Collections.emptyList();
             } else {
                 for (EntityAssembler ab : abs) {
-                    Class p0 = Classes.getGenericParameter0(ab.getClass());
+                    Class p0 = getGenericParameter0(ab.getClass());
                     List<EntityAssembler> ass = this.assemblers.get(p0);
                     if (ass == null) {
-                        ass = Lists.newArrayList();
+                        ass = new ArrayList<EntityAssembler>();
                         assemblers.put(p0, ass);
                     }
                     ass.add(ab);
@@ -106,7 +103,7 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
         return object != null && AnnotationUtils.findAnnotation(object.getClass(), Entity.class) != null;
     }
 
-    private Class aaa(Class clzz) {
+    private Class getGenericParameter0(Class clzz) {
         return (Class) ((ParameterizedType) clzz.getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
