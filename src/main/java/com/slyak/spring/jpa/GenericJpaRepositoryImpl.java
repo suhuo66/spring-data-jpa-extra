@@ -1,10 +1,6 @@
 package com.slyak.spring.jpa;
 
 import org.hibernate.SQLQuery;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,17 +72,6 @@ public class GenericJpaRepositoryImpl<T, ID extends Serializable>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <C> Page<C> query(String nativeQuery, Object beanOrMap, Class<C> clazz, Pageable pageable) {
-        Map<String, Object> params = QueryBuilder.toParams(beanOrMap);
-        SQLQuery query = QueryBuilder.toSQLQuery(em, nativeQuery, params);
-        QueryBuilder.transform(query, clazz);
-        query.setFirstResult(pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-        return new PageImpl<C>(query.list(), pageable, count(QueryUtils.createCountQueryFor(nativeQuery, null), params));
-    }
-
-    @Override
     public int count(String nativeQuery, Object beanOrMap) {
         SQLQuery query = QueryBuilder.toSQLQuery(em, nativeQuery, beanOrMap);
         Object result = query.uniqueResult();
@@ -127,12 +112,6 @@ public class GenericJpaRepositoryImpl<T, ID extends Serializable>
                 }
             }
         }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <C> List<C> list(String nativeQuery, Object beanOrMap, Class<C> clazz, int size) {
-        return QueryBuilder.transform(QueryBuilder.toSQLQuery(em, nativeQuery, beanOrMap), clazz).setFetchSize(size).list();
     }
 
     private PropertyDescriptor findFieldPropertyDescriptor(Class target, Class fieldClass) {

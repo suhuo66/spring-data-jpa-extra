@@ -1,7 +1,5 @@
 package com.slyak.spring.jpa;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -27,10 +25,6 @@ public interface GenericJpaRepository<T, ID extends Serializable> extends JpaRep
 
     //for cache
     List<T> findAllOneByOne(Collection<ID> ids);
-
-    <C> Page<C> query(String nativeQuery, Object beanOrMap, Class<C> clazz, Pageable pageable);
-
-    <C> List<C> list(String nativeQuery, Object beanOrMap, Class<C> clazz, int size);
 
     int count(String nativeQuery, Object beanOrMap);
 
