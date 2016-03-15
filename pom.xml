@@ -9,14 +9,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <!--<properties>
-        <slf4j-api-version>1.7.2</slf4j-api-version>
-        <log4j-over-slf4j-version>1.7.2</log4j-over-slf4j-version>
-        <jcl-over-slf4j-version>1.7.2</jcl-over-slf4j-version> &lt;!&ndash; no problem to have yet another slf4j bridge &ndash;&gt;
-        <logback-core-version>1.0.7</logback-core-version>
-        <logback-classic-version>1.0.7</logback-classic-version>
-         &lt;!&ndash; our logging problem child &ndash;&gt;
-    </properties>-->
     <properties>
         <hibernate-version>4.3.10.Final</hibernate-version>
         <spring-version>4.2.0.RELEASE</spring-version>
@@ -28,24 +20,6 @@
     </properties>
 
     <build>
-        <!-- Turn on filtering by default for application properties -->
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/application.yml</include>
-                    <include>**/application.properties</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <excludes>
-                    <exclude>**/application.yml</exclude>
-                    <exclude>**/application.properties</exclude>
-                </excludes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
