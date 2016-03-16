@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version V1.0, 2015/8/10.
  */
 @Component
+
 public class FreemarkerSqlTemplates implements ResourceLoaderAware {
 
     protected final Log logger = LogFactory.getLog(getClass());
@@ -56,8 +57,8 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware {
 
     private String encoding = "UTF-8";
 
-    @Value("${spring.jpa.template-location}")
-    private String templateLocation = ResourceLoader.CLASSPATH_URL_PREFIX + File.separator + "sqls";
+    @Value("${spring.jpa.template-location:classpath:/sqls}")
+    private String templateLocation;
 
     static {
         cfg.setTemplateLoader(sqlTemplateLoader);
@@ -94,7 +95,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware {
                 lastModifiedCache.put(entityName, newLastModified);
             }
         } catch (Exception e) {
-            //
+            logger.error(e);
         }
     }
 

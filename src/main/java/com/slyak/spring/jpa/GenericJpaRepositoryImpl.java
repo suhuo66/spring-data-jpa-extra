@@ -1,6 +1,5 @@
 package com.slyak.spring.jpa;
 
-import org.hibernate.SQLQuery;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,13 +68,6 @@ public class GenericJpaRepositoryImpl<T, ID extends Serializable>
             result.put(eif.getId(t), t);
         }
         return result;
-    }
-
-    @Override
-    public int count(String nativeQuery, Object beanOrMap) {
-        SQLQuery query = QueryBuilder.toSQLQuery(em, nativeQuery, beanOrMap);
-        Object result = query.uniqueResult();
-        return result == null ? 0 : ((Number) result).intValue();
     }
 
     @Override

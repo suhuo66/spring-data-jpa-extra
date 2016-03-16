@@ -26,8 +26,6 @@ public interface GenericJpaRepository<T, ID extends Serializable> extends JpaRep
     //for cache
     List<T> findAllOneByOne(Collection<ID> ids);
 
-    int count(String nativeQuery, Object beanOrMap);
-
     void toggleStatus(ID id);
 
     void fakeDelete(ID... id);
