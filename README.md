@@ -3,12 +3,14 @@
 I love spring-data-jpa, she let my hands free, crud methods are boring! However she is not perfect on dynamic native query and her return type must be an entity, although she provide us a specification solution, but i think it's heavy and not easy to use.
 
 <b>spring-data-jpa-extra comes to solve three problem:</b>
+
 1. dynamic native query support like mybatis
 2. return type can be anything
 3. no code, just sql
 
 ## Example
 1. first extends GenericJpaRepository insteadof JpaRepository
+
 <pre>
     <code>
         public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
@@ -21,6 +23,7 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 </pre>
 
 2. second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
+
 <pre>
     &lt;?xml version="1.0" encoding="utf-8" ?&gt;;
     &lt;sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -42,6 +45,7 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 </pre>
 
 ## All features
+
 ### template query
 
 ### template query object
@@ -49,6 +53,7 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 ### entity assemblers
 
 ### more useful methods (eg: mget togglestatus fakedelete)
+
 <pre><code>
     //batch get items and put the result into a map
     Map<ID, T> mget(Collection<ID> ids);
@@ -66,7 +71,8 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
     void fakeDelete(ID... id);
 </code></pre>
 
-## how to use
+## how to use?
+
 we can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
 <pre>
     &lt;dependency&gt;
