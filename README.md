@@ -24,7 +24,7 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 <pre>
     &lt;?xml version="1.0" encoding="utf-8" ?&gt;;
     &lt;sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd"&gt
+           xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd"&gt;
         &lt;sql name="findByContent"&gt;
             &lt;![CDATA[
               SELECT * FROM t_sample WHERE 1=1
