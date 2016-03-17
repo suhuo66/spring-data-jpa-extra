@@ -22,27 +22,26 @@ ovid us a specification solution, but i think it's heavy.
     </code>
 </pre>
 
-2. second create Sample.xml in your classpath (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
+2. second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 <pre>
     <code>
-        <?xml version="1.0" encoding="utf-8" ?>
-        <sqls xmlns="http://www.slyak.com/schema/templatequery"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd">
-            <sql name="findByContent">
-                <![CDATA[
-                  SELECT * FROM t_sample WHERE 1=1
-                  <#if content??>
-                    AND content LIKE :content
-                  </#if>
-                ]]>
-            </sql>
-            <sql name="findSampleDTO">
-                <![CDATA[
-                  SELECT id,name as viewName FROM t_sample WHERE id=:id
-                ]]>
-            </sql>
-        </sqls>
+    &lt;?xml version="1.0" encoding="utf-8" ?&gt;;
+    &lt;sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd"&gt
+        &lt;sql name="findByContent"&gt;
+            &lt;![CDATA[
+              SELECT * FROM t_sample WHERE 1=1
+              &lt;#if content??&gt;
+                AND content LIKE :content
+              &lt;/#if&gt;
+            ]]&gt;
+        &lt;/sql&gt;
+        &lt;sql name="findSampleDTO"&gt;
+            &lt;![CDATA[
+              SELECT id,name as viewName FROM t_sample WHERE id=:id
+            ]]&gt;
+        &lt;/sql&gt;
+    &lt;/sqls&gt;
     </code>
 </pre>
 
