@@ -49,6 +49,22 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 ### object assemblers
 
 ### more useful methods (eg: mget togglestatus fakedelete)
+<pre><code>
+    //batch get items and put the result into a map
+    Map<ID, T> mget(Collection<ID> ids);
+    
+    //get items one by one for cache
+    Map<ID, T> mgetOneByOne(Collection<ID> ids);
+    
+    //get items one by one for cache
+    List<T> findAllOneByOne(Collection<ID> ids);
+    
+    //toggle entity status if it has a Status property
+    void toggleStatus(ID id);
+    
+    //set entity status to Status.DELETED if it has a Status property
+    void fakeDelete(ID... id);
+</code></pre>
 
 ## Use it with maven
 <pre>
