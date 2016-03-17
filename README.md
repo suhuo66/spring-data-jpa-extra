@@ -66,7 +66,8 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
     void fakeDelete(ID... id);
 </code></pre>
 
-## Use it with maven
+## how to use
+we can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
 <pre>
     &lt;dependency&gt;
         &lt;groupId&gt;com.slyak&lt;/groupId&gt;
