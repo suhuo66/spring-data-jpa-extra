@@ -66,13 +66,13 @@ you can use it by using source code or adding a maven dependency (later, I'll pu
 
 <pre><code>
     //batch get items and put the result into a map
-    Map<ID, T> mget(Collection<ID> ids);
+    Map&lt;ID, T&gt; mget(Collection&lt;ID&gt; ids);
     
     //get items one by one for cache
-    Map<ID, T> mgetOneByOne(Collection<ID> ids);
+    Map&lt;ID, T&gt; mgetOneByOne(Collection&lt;ID&gt; ids);
     
     //get items one by one for cache
-    List<T> findAllOneByOne(Collection<ID> ids);
+    List&lt;T&gt; findAllOneByOne(Collection&lt;ID&gt; ids);
     
     //toggle entity status if it has a Status property
     void toggleStatus(ID id);
