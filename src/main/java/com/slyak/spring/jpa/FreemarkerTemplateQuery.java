@@ -1,9 +1,8 @@
 package com.slyak.spring.jpa;
 
+import com.slyak.util.AopTargetUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.jpa.internal.QueryImpl;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.AbstractJpaQuery;
@@ -92,9 +91,12 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
         Class<?> objectType = getQueryMethod().getReturnedObjectType();
 
         //must be hibernate QueryImpl
-        QueryImpl query = getTargetObject(getEntityManager().createNativeQuery(queryString, objectType), QueryImpl.class);
+        QueryImpl query;
 
-        if (!getQueryMethod().isQueryForEntity()) {
+        if (getQueryMethod().isQueryForEntity()) {
+            query = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(queryString, objectType));
+        } else {
+            query = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(queryString));
             //find generic type
             ClassTypeInformation<?> ctif = ClassTypeInformation.from(objectType);
             TypeInformation<?> actualType = ctif.getActualType();
@@ -118,7 +120,7 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 
     @Override
     protected TypedQuery<Long> doCreateCountQuery(Object[] values) {
-        QueryImpl nativeQuery = (QueryImpl) getEntityManager().createNativeQuery(QueryBuilder.toCountQuery(getQuery(values)));
+        QueryImpl nativeQuery = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(QueryBuilder.toCountQuery(getQuery(values))));
         return bind(nativeQuery, values);
     }
 
@@ -133,19 +135,5 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 
     protected boolean canBindParameter(Parameter parameter) {
         return parameter.isBindable();
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public <T> T getTargetObject(Object proxy, Class<T> targetClass) {
-        if (AopUtils.isJdkDynamicProxy(proxy)) {
-            try {
-                return (T) ((Advised) proxy).getTargetSource().getTarget();
-            } catch (Exception e) {
-                //will not happen
-                return null;
-            }
-        } else {
-            return (T) proxy; // expected to be cglib proxy then, which is simply a specialized class
-        }
     }
 }

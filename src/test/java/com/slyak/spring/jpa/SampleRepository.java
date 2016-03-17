@@ -21,7 +21,7 @@ public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
     List<Sample> findByTemplateQueryObject(SampleQuery sampleQuery);
 
     @TemplateQuery
-    long countContent(String content);
+    Long countContent(String content);
 
     @TemplateQuery
     List<SampleDTO> findDtos();

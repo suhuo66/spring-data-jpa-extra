@@ -44,7 +44,7 @@ public class QueryBuilder {
     }
 
     public static String toCountQuery(String query) {
-        return ORDERBY_PATTERN_1.matcher("select count(*) from (" + query + ") _ctmp").replaceAll(")");
+        return ORDERBY_PATTERN_1.matcher("select count(*) from (" + query + ") as ctmp").replaceAll(")");
     }
 
     public static void setParams(SQLQuery query, Object beanOrMap) {

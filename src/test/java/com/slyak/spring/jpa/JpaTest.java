@@ -27,6 +27,7 @@ public class JpaTest {
 
     @Before
     public void addSomeSample() {
+        sampleRepository.deleteAll();
         for (int i = 0; i < 10; i++) {
             Sample sample = new Sample();
             sample.setContent("hello world" + i);
