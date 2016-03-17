@@ -4,25 +4,23 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 
 <b>spring-data-jpa-extra comes to solve three problem:</b>
 
-1. dynamic native query support like mybatis
-2. return type can be anything
-3. no code, just sql
+- dynamic native query support like mybatis
+- return type can be anything
+- no code, just sql
 
 ## Example
-1. first extends GenericJpaRepository insteadof JpaRepository
+- first extends GenericJpaRepository insteadof JpaRepository
 
-<pre>
-    <code>
-        public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
-            @TemplateQuery
-            Page<Sample> findByContent(String content, Pageable pageable);
-            @TemplateQuery
-            SampleDTO findSampleDTO(Long id);
-        }
-    </code>
+<pre><code>
+	public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
+		@TemplateQuery
+		Page<Sample> findByContent(String content, Pageable pageable);
+		@TemplateQuery
+		SampleDTO findSampleDTO(Long id);
+		}</code>
 </pre>
 
-2. second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
+- second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
 <pre>
     &lt;?xml version="1.0" encoding="utf-8" ?&gt;;
@@ -44,15 +42,27 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
     &lt;/sqls&gt;
 </pre>
 
-## All features
+## How to use?
 
-### template query
+you can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
 
-### template query object
+<pre>
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.slyak&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-data-jpa-extra&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+</pre>
 
-### entity assemblers
+## 2 Miniute Tutorial
 
-### more useful methods (eg: mget togglestatus fakedelete)
+### Template Query
+
+### Template Query Object
+
+### Entity Assemblers
+
+### More Useful Methods (eg: mget togglestatus fakedelete)
 
 <pre><code>
     //batch get items and put the result into a map
@@ -70,14 +80,3 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
     //set entity status to Status.DELETED if it has a Status property
     void fakeDelete(ID... id);
 </code></pre>
-
-## how to use?
-
-we can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
-<pre>
-    &lt;dependency&gt;
-        &lt;groupId&gt;com.slyak&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-data-jpa-extra&lt;/artifactId&gt;
-        &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
-    &lt;/dependency&gt;
-</pre>
