@@ -1,8 +1,6 @@
 # spring-data-jpa-extra
 ## use spring data jpa more comfortable
-I love spring-data-jpa, she let my hands free, crud methods are boring! However she is not perfect on dynamic native query and her return type must be an entity, though she pr
-
-ovid us a specification solution, but i think it's heavy.
+I love spring-data-jpa, she let my hands free, crud methods are boring! However she is not perfect on dynamic native query and her return type must be an entity, although she provide us a specification solution, but i think it's heavy and not easy to use.
 
 <b>spring-data-jpa-extra comes to solve three problem:</b>
 1. dynamic native query support like mybatis
@@ -24,7 +22,6 @@ ovid us a specification solution, but i think it's heavy.
 
 2. second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 <pre>
-    <code>
     &lt;?xml version="1.0" encoding="utf-8" ?&gt;;
     &lt;sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd"&gt
@@ -42,7 +39,6 @@ ovid us a specification solution, but i think it's heavy.
             ]]&gt;
         &lt;/sql&gt;
     &lt;/sqls&gt;
-    </code>
 </pre>
 
 ## All features
@@ -56,11 +52,9 @@ ovid us a specification solution, but i think it's heavy.
 
 ## Use it with maven
 <pre>
-    <code>
-        <dependency>
-            <groupId>com.slyak</groupId>
-            <artifactId>spring-data-jpa-extra</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-    </code>
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.slyak&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-data-jpa-extra&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
 </pre>
