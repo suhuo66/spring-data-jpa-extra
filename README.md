@@ -46,7 +46,7 @@ I love spring-data-jpa, she let my hands free, crud methods are boring! However 
 
 ### template query object
 
-### object assemblers
+### entity assemblers
 
 ### more useful methods (eg: mget togglestatus fakedelete)
 <pre><code>
