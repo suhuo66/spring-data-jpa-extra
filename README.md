@@ -66,7 +66,7 @@ right now you can add repository below to get snapshots
             &lt;/snapshots&gt;
         &lt;/repository&gt;
     &lt;/repositories&gt;
-</pre&gt;
+</pre>
 
 
 ## 2 Miniute Tutorial
