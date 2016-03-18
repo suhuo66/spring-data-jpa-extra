@@ -54,6 +54,21 @@ you can use it by using source code or adding a maven dependency (later, I'll pu
     &lt;/dependency&gt;
 </pre>
 
+right now you can add repository below to get snapshots
+<pre>
+    &lt;repositories&gt;
+        &lt;repository&gt;
+            &lt;id&gt;slyak-public&lt;/id&gt;
+            &lt;name&gt;slyak public&lt;/name&gt;
+            &lt;url&gt;http://nexus.slyak.com/content/groups/public/&lt;/url&gt;
+            &lt;snapshots&gt;
+                &lt;enabled&gt;true&lt;/enabled&gt;
+            &lt;/snapshots&gt;
+        &lt;/repository&gt;
+    &lt;/repositories&gt;
+</pre&gt;
+
+
 ## 2 Miniute Tutorial
 
 ### Template Query
