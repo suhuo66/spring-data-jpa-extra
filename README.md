@@ -95,3 +95,10 @@ right now you can add repository below to get snapshots
     //set entity status to Status.DELETED if it has a Status property
     void fakeDelete(ID... id);
 </code></pre>
+
+
+## TODO List
+- More types of template support (now freemarker)
+- More JPA comparison support (now hibernate)
+- Performance test and do some optimization
+- More other useful features
