@@ -17,55 +17,55 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 		Page<Sample> findByContent(String content, Pageable pageable);
 		@TemplateQuery
 		SampleDTO findSampleDTO(Long id);
-		}</code>
+	}
 ```
 
 - second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
-<pre>
-    &lt;?xml version="1.0" encoding="utf-8" ?&gt;;
-    &lt;sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd"&gt;
-        &lt;sql name="findByContent"&gt;
-            &lt;![CDATA[
+```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd">
+        <sql name="findByContent">
+            <![CDATA[
               SELECT * FROM t_sample WHERE 1=1
-              &lt;#if content??&gt;
+              <#if content??>
                 AND content LIKE :content
-              &lt;/#if&gt;
-            ]]&gt;
-        &lt;/sql&gt;
-        &lt;sql name="findSampleDTO"&gt;
-            &lt;![CDATA[
+              </#if>
+            ]]>
+        </sql>
+        <sql name="findSampleDTO">
+            <![CDATA[
               SELECT id,name as viewName FROM t_sample WHERE id=:id
-            ]]&gt;
-        &lt;/sql&gt;
-    &lt;/sqls&gt;
-</pre>
+            ]]>
+        </sql>
+    </sqls>
+```
 
 ## How to use?
 
 you can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
 
 ```xml
-    &lt;dependency&gt;
-        &lt;groupId&gt;com.slyak&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-data-jpa-extra&lt;/artifactId&gt;
-        &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
-    &lt;/dependency&gt;
+    <dependency>
+        <groupId>com.slyak</groupId>
+        <artifactId>spring-data-jpa-extra</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 ```
 
 right now you can add repository below to get snapshots
 ```xml
-    &lt;repositories&gt;
-        &lt;repository&gt;
-            &lt;id&gt;slyak-public&lt;/id&gt;
-            &lt;name&gt;slyak public&lt;/name&gt;
-            &lt;url&gt;http://nexus.slyak.com/content/groups/public/&lt;/url&gt;
-            &lt;snapshots&gt;
-                &lt;enabled&gt;true&lt;/enabled&gt;
-            &lt;/snapshots&gt;
-        &lt;/repository&gt;
-    &lt;/repositories&gt;
+    <repositories>
+        <repository>
+            <id>slyak-public</id>
+            <name>slyak public</name>
+            <url>http://nexus.slyak.com/content/groups/public/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 ```
 
 
@@ -79,22 +79,22 @@ right now you can add repository below to get snapshots
 
 ### More Useful Methods (eg: mget togglestatus fakedelete)
 
-<pre><code>
+```java
     //batch get items and put the result into a map
-    Map&lt;ID, T&gt; mget(Collection&lt;ID&gt; ids);
+    Map<ID, T> mget(Collection<ID> ids);
     
     //get items one by one for cache
-    Map&lt;ID, T&gt; mgetOneByOne(Collection&lt;ID&gt; ids);
+    Map<ID, T> mgetOneByOne(Collection<ID> ids);
     
     //get items one by one for cache
-    List&lt;T&gt; findAllOneByOne(Collection&lt;ID&gt; ids);
+    List<T> findAllOneByOne(Collection<ID> ids);
     
     //toggle entity status if it has a Status property
     void toggleStatus(ID id);
     
     //set entity status to Status.DELETED if it has a Status property
     void fakeDelete(ID... id);
-</code></pre>
+```
 
 
 ## TODO List
