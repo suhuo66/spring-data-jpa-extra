@@ -11,14 +11,14 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 ## Example
 - first extends GenericJpaRepository insteadof JpaRepository
 
-<pre><code>
+```java
 	public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
 		@TemplateQuery
 		Page<Sample> findByContent(String content, Pageable pageable);
 		@TemplateQuery
 		SampleDTO findSampleDTO(Long id);
 		}</code>
-</pre>
+```
 
 - second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
@@ -46,16 +46,16 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 
 you can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
 
-<pre>
+```xml
     &lt;dependency&gt;
         &lt;groupId&gt;com.slyak&lt;/groupId&gt;
         &lt;artifactId&gt;spring-data-jpa-extra&lt;/artifactId&gt;
         &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
     &lt;/dependency&gt;
-</pre>
+```
 
 right now you can add repository below to get snapshots
-<pre>
+```xml
     &lt;repositories&gt;
         &lt;repository&gt;
             &lt;id&gt;slyak-public&lt;/id&gt;
@@ -66,7 +66,7 @@ right now you can add repository below to get snapshots
             &lt;/snapshots&gt;
         &lt;/repository&gt;
     &lt;/repositories&gt;
-</pre>
+```
 
 
 ## 2 Miniute Tutorial
