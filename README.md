@@ -1,6 +1,6 @@
 # spring-data-jpa-extra
 ## use spring data jpa more comfortable
-I love spring-data-jpa, she let my hands free, crud methods are boring! However she is not perfect on dynamic native query and her return type must be an entity, although she provide us a specification solution, but i think it's heavy and not easy to use.
+I love spring-data-jpa, she set my hands free, crud methods are boring! However she is not perfect on dynamic native query and her return type must be an entity, although she provide us a specification solution, but i think it's heavy and not easy to use.
 
 <b>spring-data-jpa-extra comes to solve three problem:</b>
 
