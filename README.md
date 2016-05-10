@@ -16,7 +16,7 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 		@TemplateQuery
 		Page<Sample> findByContent(String content, Pageable pageable);
 		@TemplateQuery
-		SampleDTO findSampleDTO(Long id);
+		CustomVO findCustomVO(Long id);
 	}
 ```
 
@@ -34,7 +34,7 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
               </#if>
             ]]>
         </sql>
-        <sql name="findSampleDTO">
+        <sql name="findCustomVO">
             <![CDATA[
               SELECT id,name as viewName FROM t_sample WHERE id=:id
             ]]>
