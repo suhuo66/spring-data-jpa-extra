@@ -72,13 +72,18 @@ right now you can add repository below to get snapshots
 ## 2 Miniute Tutorial
 
 ### Template Query
-    Methods annotated with```java @TemplateQuery ```java tells QueryLookupStrategy to look up query by template,this is often used by dynamic query.
+```java
+    Methods annotated with @TemplateQuery tells QueryLookupStrategy to look up query by template,this is often used by dynamic query.
+```java
 
 ### Template Query Object
-    Object annotated```java @TemplateQueryObject ```java tells template process engine render params provide by object properties.
+```java
+    Object annotated with @TemplateQueryObject tells template process engine render params provide by object properties.
+```java
 
 ### Entity Assemblers
     Entity assemblers can assembler entity with other entities, such as one to many relation or one to one relation.
+
 
 ### More Useful Methods (eg: mget togglestatus fakedelete)
 
