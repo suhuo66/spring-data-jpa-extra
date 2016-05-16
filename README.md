@@ -9,7 +9,19 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 - no code, just sql
 
 ## Example
-- first extends GenericJpaRepository insteadof JpaRepository
+- first add ComponentScan
+by java bean
+```java
+@ComponentScan({"com.slyak","your.base.package"})
+```java
+
+by xml
+```xml
+<context:component-scan base-package="com.slyak,your.base.package"/>
+```xml
+
+
+- second extends GenericJpaRepository insteadof JpaRepository
 
 ```java
 	public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
@@ -20,7 +32,7 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 	}
 ```
 
-- second create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
+- third create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
 ```xml
     <?xml version="1.0" encoding="utf-8" ?>
