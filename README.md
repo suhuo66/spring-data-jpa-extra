@@ -13,12 +13,12 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 by java bean
 ```java
 @ComponentScan({"com.slyak","your.base.package"})
-```java
+```
 
 by xml
 ```xml
 <context:component-scan base-package="com.slyak,your.base.package"/>
-```xml
+```
 
 
 - second extends GenericJpaRepository insteadof JpaRepository
