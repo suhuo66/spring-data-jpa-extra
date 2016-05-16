@@ -75,7 +75,7 @@ right now you can add repository below to get snapshots
 Methods annotated with @TemplateQuery tells QueryLookupStrategy to look up query by template,this is often used by dynamic query.
 
 ### Template Query Object
-Object annotated with @TemplateQueryObject tells template process engine render params provide by object properties.
+Object annotated with @TemplateQueryObject tells template process engine render params provided by object properties.
 
 ### Entity Assemblers
 Entity assemblers can assembler entity with other entities, such as one to many relation or one to one relation.
