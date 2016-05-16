@@ -10,6 +10,7 @@ I love spring-data-jpa, she set my hands free, crud methods are boring! However 
 
 ## Example
 - first add ComponentScan
+
 by java bean
 ```java
 @ComponentScan({"com.slyak","your.base.package"})
