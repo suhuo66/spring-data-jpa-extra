@@ -57,13 +57,13 @@ by xml
 
 ## How to use?
 
-you can use it by using source code or adding a maven dependency (later, I'll put it to maven central repository)
+you can use it by using source code or adding a maven dependency
 
 ```xml
     <dependency>
         <groupId>com.slyak</groupId>
         <artifactId>spring-data-jpa-extra</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </dependency>
 ```
 
