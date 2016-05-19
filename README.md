@@ -67,20 +67,6 @@ you can use it by using source code or adding a maven dependency
     </dependency>
 ```
 
-right now you can add repository below to get snapshots
-```xml
-    <repositories>
-        <repository>
-            <id>slyak-public</id>
-            <name>slyak public</name>
-            <url>http://nexus.slyak.com/content/groups/public/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-```
-
 
 ## 2 Miniute Tutorial
 
