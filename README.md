@@ -1,3 +1,4 @@
+![SLYAK](./logo.png)
 # spring-data-jpa-extra
 ## use spring data jpa more comfortable
 I love spring-data-jpa, she set my hands free, crud methods are boring! However she is not perfect on dynamic native query and her return type must be an entity, although she provide us a specification solution, but i think it's heavy and not easy to use.
@@ -105,3 +106,7 @@ Entity assemblers can assembler entity with other entities, such as one to many 
 - More JPA comparison support (now hibernate)
 - Performance test and do some optimization
 - More other useful features
+
+
+## Change Log
+[CHANGELOG](./CHANGELOG.md)
