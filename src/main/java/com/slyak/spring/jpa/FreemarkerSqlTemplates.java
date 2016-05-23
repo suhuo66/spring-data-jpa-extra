@@ -69,7 +69,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
     private String templateLocation;
 
     @Value("${spring.jpa.template-base-package:}")
-    private String basePackage;
+    private String templateBasePackage;
 
     static {
         cfg.setTemplateLoader(sqlTemplateLoader);
@@ -127,8 +127,8 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
         }
         if (!names.isEmpty()) {
             String pattern;
-            if (StringUtils.isNotBlank(basePackage)) {
-                pattern = "classpath*:" + StringUtils.replaceEach(basePackage, new String[]{"."}, new String[]{"/"}) + "/**/*.xml";
+            if (StringUtils.isNotBlank(templateBasePackage)) {
+                pattern = "classpath*:" + StringUtils.replaceEach(templateBasePackage, new String[]{"."}, new String[]{"/"}) + "/**/*.xml";
             } else {
                 pattern = templateLocation.contains("xml") ? templateLocation : templateLocation + "/**/*.xml";
             }
