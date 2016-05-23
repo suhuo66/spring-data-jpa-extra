@@ -14,7 +14,9 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.springframework.util.xml.XmlValidationModeDetector;
@@ -128,7 +130,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
         if (!names.isEmpty()) {
             String pattern;
             if (StringUtils.isNotBlank(templateBasePackage)) {
-                pattern = "classpath*:" + StringUtils.replaceEach(templateBasePackage, new String[]{"."}, new String[]{"/"}) + "/**/*.xml";
+                pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + ClassUtils.convertClassNameToResourcePath(templateBasePackage) + "/**/*.xml";
             } else {
                 pattern = templateLocation.contains("xml") ? templateLocation : templateLocation + "/**/*.xml";
             }
