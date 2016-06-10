@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.xml.DefaultDocumentLoader;
 import org.springframework.beans.factory.xml.DocumentLoader;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
@@ -15,7 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
@@ -43,7 +41,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/10.
  */
-@Component
 public class FreemarkerSqlTemplates implements ResourceLoaderAware, InitializingBean {
 
     @PersistenceContext
@@ -67,10 +64,10 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 
     private String encoding = "UTF-8";
 
-    @Value("${spring.jpa.template-location:classpath:/sqls}")
+//    @Value("${spring.jpa.template-location:classpath:/sqls}")
     private String templateLocation;
 
-    @Value("${spring.jpa.template-base-package:}")
+//    @Value("${spring.jpa.template-base-package:**}")
     private String templateBasePackage;
 
     static {
@@ -143,6 +140,13 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
                 }
             }
         }
+    }
 
+    public void setTemplateLocation(String templateLocation) {
+        this.templateLocation = templateLocation;
+    }
+
+    public void setTemplateBasePackage(String templateBasePackage) {
+        this.templateBasePackage = templateBasePackage;
     }
 }
