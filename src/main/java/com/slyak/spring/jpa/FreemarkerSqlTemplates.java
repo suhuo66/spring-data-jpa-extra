@@ -43,37 +43,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FreemarkerSqlTemplates implements ResourceLoaderAware, InitializingBean {
 
-    @PersistenceContext
-    private EntityManager em;
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
     private static Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-
     private static StringTemplateLoader sqlTemplateLoader = new StringTemplateLoader();
-
-    private DocumentLoader documentLoader = new DefaultDocumentLoader();
-
-    private EntityResolver entityResolver;
-
-    private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
-
-    private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
-
-    private Map<String, Resource> sqlResources = new ConcurrentHashMap<String, Resource>();
-
-    private String encoding = "UTF-8";
-
-//    @Value("${spring.jpa.template-location:classpath:/sqls}")
-    private String templateLocation;
-
-//    @Value("${spring.jpa.template-base-package:**}")
-    private String templateBasePackage;
 
     static {
         cfg.setTemplateLoader(sqlTemplateLoader);
     }
 
+    protected final Log logger = LogFactory.getLog(getClass());
+    @PersistenceContext
+    private EntityManager em;
+    private DocumentLoader documentLoader = new DefaultDocumentLoader();
+    private EntityResolver entityResolver;
+    private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
+    private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
+    private Map<String, Resource> sqlResources = new ConcurrentHashMap<String, Resource>();
+    private String encoding = "UTF-8";
+    private String templateLocation = "classpath:/sqls";
+    private String templateBasePackage = "**";
     private ResourceLoader resourceLoader;
 
     public String process(String entityName, String methodName, Map<String, Object> model) {
