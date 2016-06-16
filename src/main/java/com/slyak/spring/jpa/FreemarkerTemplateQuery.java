@@ -3,7 +3,6 @@ package com.slyak.spring.jpa;
 import com.slyak.util.AopTargetUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.jpa.internal.QueryImpl;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.AbstractJpaQuery;
 import org.springframework.data.jpa.repository.query.JpaParameters;
@@ -24,7 +23,7 @@ import java.util.Map;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/9.
@@ -77,7 +76,8 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
                 if (!QueryBuilder.isValidValue(value)) {
                     continue;
                 }
-                if (AnnotationUtils.findAnnotation(value.getClass(), TemplateQueryObject.class) == null) {
+                Class<?> clz = value.getClass();
+                if (clz.isPrimitive() || String.class.isAssignableFrom(clz) || Number.class.isAssignableFrom(clz)) {
                     params.put(parameter.getName(), value);
                 } else {
                     params = QueryBuilder.toParams(value);
