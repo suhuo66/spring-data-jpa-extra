@@ -70,6 +70,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
             cfg.getTemplate(getTemplateKey(entityName, methodName), encoding).process(model, writer);
             return writer.toString();
         } catch (Exception e) {
+            logger.error("process template error. Entity name: " + entityName + " methodName:" + methodName, e);
             return StringUtils.EMPTY;
         }
     }

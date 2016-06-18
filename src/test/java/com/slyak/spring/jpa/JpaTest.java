@@ -57,7 +57,7 @@ public class JpaTest {
     public void findByTemplateQueryWithTemplateQueryObject() {
         SampleQuery sq = new SampleQuery();
         sq.setContent("world");
-        List<Sample> samples = sampleRepository.findByTemplateQueryObject(sq);
+        List<Sample> samples = sampleRepository.findByTemplateQueryObject(sq,null);
         Assert.assertTrue(samples.size() == 10);
     }
 }
