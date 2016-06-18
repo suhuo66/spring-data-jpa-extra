@@ -3,6 +3,7 @@ package com.slyak.spring.jpa;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -16,13 +17,14 @@ import javax.sql.DataSource;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 16/3/15.
  */
 @Configuration
 @ComponentScan("com.slyak")
+@EnableJpaRepositories(repositoryBaseClass = GenericJpaRepositoryImpl.class, repositoryFactoryBeanClass = GenericJpaRepositoryFactoryBean.class)
 class AppConfig {
 
     @Bean
@@ -50,6 +52,11 @@ class AppConfig {
         lemfb.setJpaVendorAdapter(jpaVendorAdapter());
         lemfb.setPackagesToScan("com.slyak.spring.jpa");
         return lemfb;
+    }
+
+    @Bean
+    public FreemarkerSqlTemplates freemarkerSqlTemplates() {
+        return new FreemarkerSqlTemplates();
     }
 
 }

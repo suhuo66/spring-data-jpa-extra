@@ -18,7 +18,7 @@ public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
     Page<Sample> findByContent(String content, Pageable pageable);
 
     @TemplateQuery
-    List<Sample> findByTemplateQueryObject(SampleQuery sampleQuery);
+    List<Sample> findByTemplateQueryObject(SampleQuery sampleQuery,Pageable pageable);
 
     @TemplateQuery
     Long countContent(String content);

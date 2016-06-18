@@ -7,7 +7,6 @@ package com.slyak.spring.jpa;
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 16/3/15.
  */
-@TemplateQueryObject
 public class SampleQuery {
 
     private String content;
