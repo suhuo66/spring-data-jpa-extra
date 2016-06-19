@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/11.
@@ -29,7 +29,7 @@ public class QueryBuilder {
     public static <C> Query transform(Query query, Class<C> clazz) {
         if (Map.class.isAssignableFrom(clazz)) {
             return query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-        } else if (String.class.isAssignableFrom(clazz) || Number.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
+        } else if (Number.class.isAssignableFrom(clazz) || clazz.isPrimitive() || String.class.isAssignableFrom(clazz) || Date.class.isAssignableFrom(clazz)) {
             return query.setResultTransformer(new SmartTransformer(clazz));
         } else {
             return query.setResultTransformer(new BeanTransformerAdapter<C>(clazz));
