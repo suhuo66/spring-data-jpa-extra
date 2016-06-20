@@ -13,7 +13,7 @@ import java.util.*;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/7
@@ -57,7 +57,10 @@ public class GenericJpaRepositoryImpl<T, ID extends Serializable>
     public List<T> findAllOneByOne(Collection<ID> ids) {
         List<T> results = new ArrayList<T>();
         for (ID id : ids) {
-            results.add(findOne(id));
+            T one = findOne(id);
+            if (one != null) {
+                results.add(one);
+            }
         }
         return results;
     }
@@ -65,7 +68,9 @@ public class GenericJpaRepositoryImpl<T, ID extends Serializable>
     private Map<ID, T> toMap(List<T> list) {
         Map<ID, T> result = new LinkedHashMap<ID, T>();
         for (T t : list) {
-            result.put(eif.getId(t), t);
+            if (t != null) {
+                result.put(eif.getId(t), t);
+            }
         }
         return result;
     }
