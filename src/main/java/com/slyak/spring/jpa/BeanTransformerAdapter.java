@@ -4,8 +4,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.beans.*;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.StringUtils;
@@ -17,38 +20,43 @@ import java.util.*;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 15/11/24.
  */
 public class BeanTransformerAdapter<T> implements ResultTransformer {
 
+    private static DefaultConversionService conversionService;
+
+    static {
+        BeanTransformerAdapter.conversionService = new DefaultConversionService();
+        Collection<Converter<?, ?>> convertersToRegister = JodaTimeConverters.getConvertersToRegister();
+        for (Converter<?, ?> converter : convertersToRegister) {
+            BeanTransformerAdapter.conversionService.addConverter(converter);
+        }
+    }
+
     /**
      * Logger available to subclasses
      */
     protected final Log logger = LogFactory.getLog(getClass());
-
     /**
      * The class we are mapping to
      */
     private Class<T> mappedClass;
-
     /**
      * Whether we're strictly validating
      */
     private boolean checkFullyPopulated = false;
-
     /**
      * Whether we're defaulting primitives when mapping a null value
      */
     private boolean primitivesDefaultedForNullValue = false;
-
     /**
      * Map of the fields we provide mapping for
      */
     private Map<String, PropertyDescriptor> mappedFields;
-
     /**
      * Set of bean properties we provide mapping for
      */
@@ -61,6 +69,7 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
      * @see #setCheckFullyPopulated
      */
     public BeanTransformerAdapter() {
+
     }
 
     /**
@@ -210,6 +219,7 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
      * @param bw the BeanWrapper to initialize
      */
     protected void initBeanWrapper(BeanWrapper bw) {
+        bw.setConversionService(conversionService);
     }
 
     /**
