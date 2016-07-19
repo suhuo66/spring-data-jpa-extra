@@ -64,10 +64,18 @@ you can use it by using source code or adding a maven dependency
     <dependency>
         <groupId>com.slyak</groupId>
         <artifactId>spring-data-jpa-extra</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.5</version>
     </dependency>
 ```
+config with annotation
+```java
+@EnableJpaRepositories(basePackages = "your.packages", repositoryBaseClass = GenericJpaRepositoryImpl.class, repositoryFactoryBeanClass = GenericJpaRepositoryFactoryBean.class)
+```
 
+or with xml
+```xml
+<jpa:repositories base-package="your.packages" repository-base-class="com.slyak.spring.jpa.GenericJpaRepositoryImpl" repository-factory-bean-class="com.slyak.spring.jpa.GenericJpaRepositoryFactoryBean"/>
+```
 
 ## 2 Miniute Tutorial
 
