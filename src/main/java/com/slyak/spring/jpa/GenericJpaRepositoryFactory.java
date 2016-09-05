@@ -12,6 +12,7 @@ import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.support.RepositoryProxyPostProcessor;
 import org.springframework.data.repository.query.EvaluationContextProvider;
 import org.springframework.data.repository.query.QueryLookupStrategy;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/9.
@@ -91,7 +92,7 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
         Object object = iterable.iterator().next();
         if (isEntityObject(object)) {
             List<EntityAssembler> entityAssemblers = getEntityAssemblers(object.getClass());
-            if (entityAssemblers.isEmpty()) {
+            if (!CollectionUtils.isEmpty(entityAssemblers)) {
                 for (EntityAssembler assembler : entityAssemblers) {
                     assembler.massemble(iterable);
                 }
