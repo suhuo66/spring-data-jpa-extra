@@ -122,7 +122,7 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
                         massemble(((Map) proceed).values());
                     } else if (isEntityObject(proceed)) {
                         List<EntityAssembler> entityAssemblers = getEntityAssemblers(proceed.getClass());
-                        if (!entityAssemblers.isEmpty()) {
+                        if (!CollectionUtils.isEmpty(entityAssemblers)) {
                             for (EntityAssembler assembler : entityAssemblers) {
                                 assembler.assemble(proceed);
                             }
