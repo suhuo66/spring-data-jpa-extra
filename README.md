@@ -114,7 +114,7 @@ Entity assemblers can assembler entity with other entities, such as one to many 
 - More JPA comparison support (now hibernate)
 - Performance test and do some optimization
 - More other useful features
-- Change to latest spring-data-jpa version
+- Change to the latest spring-data-jpa version
 
 ## Change Log
 [CHANGELOG](./CHANGELOG.md)
