@@ -28,109 +28,115 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version V1.0, 2015/8/9.
  */
 public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
-    private final EntityManager entityManager;
-    private final PersistenceProvider extractor;
-    private Map<Class<?>, List<EntityAssembler>> assemblers = new ConcurrentHashMap<Class<?>, List<EntityAssembler>>();
+	private final EntityManager entityManager;
 
-    /**
-     * Creates a new {@link JpaRepositoryFactory}.
-     *
-     * @param entityManager must not be {@literal null}
-     */
-    public GenericJpaRepositoryFactory(EntityManager entityManager) {
-        super(entityManager);
-        this.entityManager = entityManager;
-        this.extractor = PersistenceProvider.fromEntityManager(entityManager);
+	private final PersistenceProvider extractor;
 
-        final AssmblerInterceptor assmblerInterceptor = new AssmblerInterceptor();
-        addRepositoryProxyPostProcessor(new RepositoryProxyPostProcessor() {
-            @Override
-            public void postProcess(ProxyFactory factory, RepositoryInformation repositoryInformation) {
-                factory.addAdvice(assmblerInterceptor);
-            }
-        });
-    }
+	private Map<Class<?>, List<EntityAssembler>> assemblers = new ConcurrentHashMap<Class<?>, List<EntityAssembler>>();
 
-    @Override
-    protected QueryLookupStrategy getQueryLookupStrategy(QueryLookupStrategy.Key key, EvaluationContextProvider evaluationContextProvider) {
-        return TemplateQueryLookupStrategy.create(entityManager, key, extractor, evaluationContextProvider);
-    }
+	/**
+	 * Creates a new {@link JpaRepositoryFactory}.
+	 *
+	 * @param entityManager must not be {@literal null}
+	 */
+	public GenericJpaRepositoryFactory(EntityManager entityManager) {
+		super(entityManager);
+		this.entityManager = entityManager;
+		this.extractor = PersistenceProvider.fromEntityManager(entityManager);
 
-    private List<EntityAssembler> getEntityAssemblers(Class<?> clazz) {
-        if (assemblers.isEmpty()) {
-            Collection<EntityAssembler> abs = ContextHolder.getBeansOfType(EntityAssembler.class);
-            if (abs.isEmpty()) {
-                return Collections.emptyList();
-            } else {
-                for (EntityAssembler ab : abs) {
-                    Class p0 = getGenericParameter0(ab.getClass());
-                    List<EntityAssembler> ass = this.assemblers.get(p0);
-                    if (ass == null) {
-                        ass = new ArrayList<EntityAssembler>();
-                        assemblers.put(p0, ass);
-                    }
-                    ass.add(ab);
-                }
-                for (List<EntityAssembler> ess : assemblers.values()) {
-                    Collections.sort(ess, new Comparator<EntityAssembler>() {
-                        @Override
-                        public int compare(EntityAssembler o1, EntityAssembler o2) {
-                            return OrderUtils.getOrder(o2.getClass()) - OrderUtils.getOrder(o1.getClass());
-                        }
-                    });
-                }
-            }
-        }
-        return assemblers.get(clazz);
-    }
+		final AssmblerInterceptor assmblerInterceptor = new AssmblerInterceptor();
+		addRepositoryProxyPostProcessor(new RepositoryProxyPostProcessor() {
+			@Override
+			public void postProcess(ProxyFactory factory, RepositoryInformation repositoryInformation) {
+				factory.addAdvice(assmblerInterceptor);
+			}
+		});
+	}
 
-    private void massemble(Iterable iterable) {
-        if (!iterable.iterator().hasNext()) {
-            return;
-        }
+	@Override
+	protected QueryLookupStrategy getQueryLookupStrategy(QueryLookupStrategy.Key key,
+			EvaluationContextProvider evaluationContextProvider) {
+		return TemplateQueryLookupStrategy.create(entityManager, key, extractor, evaluationContextProvider);
+	}
 
-        Object object = iterable.iterator().next();
-        if (isEntityObject(object)) {
-            List<EntityAssembler> entityAssemblers = getEntityAssemblers(object.getClass());
-            if (!CollectionUtils.isEmpty(entityAssemblers)) {
-                for (EntityAssembler assembler : entityAssemblers) {
-                    assembler.massemble(iterable);
-                }
-            }
-        }
-    }
+	private List<EntityAssembler> getEntityAssemblers(Class<?> clazz) {
+		if (assemblers.isEmpty()) {
+			Collection<EntityAssembler> abs = ContextHolder.getBeansOfType(EntityAssembler.class);
+			if (abs.isEmpty()) {
+				return Collections.emptyList();
+			}
+			else {
+				for (EntityAssembler ab : abs) {
+					Class p0 = getGenericParameter0(ab.getClass());
+					List<EntityAssembler> ass = this.assemblers.get(p0);
+					if (ass == null) {
+						ass = new ArrayList<EntityAssembler>();
+						assemblers.put(p0, ass);
+					}
+					ass.add(ab);
+				}
+				for (List<EntityAssembler> ess : assemblers.values()) {
+					Collections.sort(ess, new Comparator<EntityAssembler>() {
+						@Override
+						public int compare(EntityAssembler o1, EntityAssembler o2) {
+							return OrderUtils.getOrder(o2.getClass()) - OrderUtils.getOrder(o1.getClass());
+						}
+					});
+				}
+			}
+		}
+		return assemblers.get(clazz);
+	}
 
-    private boolean isEntityObject(Object object) {
-        return object != null && AnnotationUtils.findAnnotation(object.getClass(), Entity.class) != null;
-    }
+	private void massemble(Iterable iterable) {
+		if (!iterable.iterator().hasNext()) {
+			return;
+		}
 
-    private Class getGenericParameter0(Class clzz) {
-        return (Class) ((ParameterizedType) clzz.getGenericSuperclass()).getActualTypeArguments()[0];
-    }
+		Object object = iterable.iterator().next();
+		if (isEntityObject(object)) {
+			List<EntityAssembler> entityAssemblers = getEntityAssemblers(object.getClass());
+			if (!CollectionUtils.isEmpty(entityAssemblers)) {
+				for (EntityAssembler assembler : entityAssemblers) {
+					assembler.massemble(iterable);
+				}
+			}
+		}
+	}
 
-    public class AssmblerInterceptor implements MethodInterceptor, AfterAdvice {
+	private boolean isEntityObject(Object object) {
+		return object != null && AnnotationUtils.findAnnotation(object.getClass(), Entity.class) != null;
+	}
 
-        @Override
-        public Object invoke(MethodInvocation invocation) throws Throwable {
-            Object proceed = invocation.proceed();
-            if (!"save".equals(invocation.getMethod().getName())) {
-                if (proceed != null) {
-                    //EntityAssembler
-                    if (proceed instanceof Iterable) {
-                        massemble((Iterable) proceed);
-                    } else if (proceed instanceof Map) {
-                        massemble(((Map) proceed).values());
-                    } else if (isEntityObject(proceed)) {
-                        List<EntityAssembler> entityAssemblers = getEntityAssemblers(proceed.getClass());
-                        if (!CollectionUtils.isEmpty(entityAssemblers)) {
-                            for (EntityAssembler assembler : entityAssemblers) {
-                                assembler.assemble(proceed);
-                            }
-                        }
-                    }
-                }
-            }
-            return proceed;
-        }
-    }
+	private Class getGenericParameter0(Class clzz) {
+		return (Class) ((ParameterizedType) clzz.getGenericSuperclass()).getActualTypeArguments()[0];
+	}
+
+	public class AssmblerInterceptor implements MethodInterceptor, AfterAdvice {
+
+		@Override
+		public Object invoke(MethodInvocation invocation) throws Throwable {
+			Object proceed = invocation.proceed();
+			if (!"save".equals(invocation.getMethod().getName())) {
+				if (proceed != null) {
+					//EntityAssembler
+					if (proceed instanceof Iterable) {
+						massemble((Iterable) proceed);
+					}
+					else if (proceed instanceof Map) {
+						massemble(((Map) proceed).values());
+					}
+					else if (isEntityObject(proceed)) {
+						List<EntityAssembler> entityAssemblers = getEntityAssemblers(proceed.getClass());
+						if (!CollectionUtils.isEmpty(entityAssemblers)) {
+							for (EntityAssembler assembler : entityAssemblers) {
+								assembler.assemble(proceed);
+							}
+						}
+					}
+				}
+			}
+			return proceed;
+		}
+	}
 }

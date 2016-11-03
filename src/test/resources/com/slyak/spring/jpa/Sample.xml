@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<sqls xmlns="http://www.slyak.com/schema/templatequery"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd">
+<sqls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.slyak.com/schema/templatequery"
+      xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd">
 
     <sql name="findByContent">
         <![CDATA[

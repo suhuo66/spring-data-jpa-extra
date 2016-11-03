@@ -2,22 +2,22 @@ package com.slyak.spring.jpa;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 16/3/15.
  */
 public class SampleQuery {
 
-    private String content;
+	private String content;
 
-    public String getContent() {
-        return content;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public void setContent(String content) {
-        if (content != null) {
-            this.content = "%" + content + "%";
-        }
-    }
+	public void setContent(String content) {
+		if (content != null) {
+			this.content = "%" + content + "%";
+		}
+	}
 }

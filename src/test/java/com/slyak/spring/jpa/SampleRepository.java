@@ -7,22 +7,22 @@ import java.util.List;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 16/3/15.
  */
 public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
 
-    @TemplateQuery
-    Page<Sample> findByContent(String content, Pageable pageable);
+	@TemplateQuery
+	Page<Sample> findByContent(String content, Pageable pageable);
 
-    @TemplateQuery
-    List<Sample> findByTemplateQueryObject(SampleQuery sampleQuery,Pageable pageable);
+	@TemplateQuery
+	List<Sample> findByTemplateQueryObject(SampleQuery sampleQuery, Pageable pageable);
 
-    @TemplateQuery
-    Long countContent(String content);
+	@TemplateQuery
+	Long countContent(String content);
 
-    @TemplateQuery
-    List<SampleDTO> findDtos();
+	@TemplateQuery
+	List<SampleDTO> findDtos();
 }

@@ -1,7 +1,6 @@
 package com.slyak.spring.jpa;
 
 import org.springframework.data.jpa.repository.query.*;
-import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.util.ReflectionUtils;
@@ -17,77 +16,79 @@ import java.lang.reflect.Method;
  */
 public class AbstractTemplateBasedJpaQuery extends AbstractJpaQuery {
 
-    private JpaQueryMethod method;
+	private JpaQueryMethod method;
 
-    private QueryTemplate query;
+	private QueryTemplate query;
 
-    private QueryTemplate countQuery;
+	private QueryTemplate countQuery;
 
-    /**
-     * Creates a new {@link AbstractJpaQuery} from the given {@link JpaQueryMethod}.
-     *
-     * @param method
-     * @param em
-     */
-    public AbstractTemplateBasedJpaQuery(JpaQueryMethod method, EntityManager em, QueryTemplateContext context) {
-        super(method, em);
-        this.method = method;
-        this.query = context.lookup(getQueryMethod().getNamedQueryName());
-        String cq = executeMethod("getCountQuery");
-        this.countQuery = cq == null ? null : context.lookup(cq);
-    }
+	/**
+	 * Creates a new {@link AbstractJpaQuery} from the given {@link JpaQueryMethod}.
+	 *
+	 * @param method
+	 * @param em
+	 */
+	public AbstractTemplateBasedJpaQuery(JpaQueryMethod method, EntityManager em, QueryTemplateContext context) {
+		super(method, em);
+		this.method = method;
+		this.query = context.lookup(getQueryMethod().getNamedQueryName());
+		String cq = executeMethod("getCountQuery");
+		this.countQuery = cq == null ? null : context.lookup(cq);
+	}
 
-    @Override
-    protected Query doCreateQuery(Object[] values) {
-        ParameterAccessor accessor = new ParametersParameterAccessor(getQueryMethod().getParameters(), values);
-        String sortedQueryString = QueryUtils.applySorting(query.getQueryString(), accessor.getSort(), QueryUtils.detectAlias(query.getQueryString()));
+	@Override
+	protected Query doCreateQuery(Object[] values) {
+		ParameterAccessor accessor = new ParametersParameterAccessor(getQueryMethod().getParameters(), values);
+		String sortedQueryString = QueryUtils.applySorting(query.getQueryString(), accessor.getSort(),
+				QueryUtils.detectAlias(query.getQueryString()));
 
-        Query query = createJpaQuery(sortedQueryString);
+		Query query = createJpaQuery(sortedQueryString);
 
-        return createBinder(values).bindAndPrepare(query);
-    }
+		return createBinder(values).bindAndPrepare(query);
+	}
 
-    @Override
-    protected Query doCreateCountQuery(Object[] values) {
-        String queryString = countQuery.getQueryString();
-        EntityManager em = getEntityManager();
-        boolean isNativeQuery = executeMethod("nativeQuery");
-        return createBinder(values).bind(isNativeQuery ? em.createNativeQuery(queryString) : em.createQuery(queryString, Long.class));
-    }
+	@Override
+	protected Query doCreateCountQuery(Object[] values) {
+		String queryString = countQuery.getQueryString();
+		EntityManager em = getEntityManager();
+		boolean isNativeQuery = executeMethod("nativeQuery");
+		return createBinder(values)
+				.bind(isNativeQuery ? em.createNativeQuery(queryString) : em.createQuery(queryString, Long.class));
+	}
 
-    public Query createJpaQuery(String queryString) {
-        return getEntityManager().createQuery(queryString);
-    }
+	public Query createJpaQuery(String queryString) {
+		return getEntityManager().createQuery(queryString);
+	}
 
-    @Override
-    protected ParameterBinder createBinder(Object[] values) {
-        return new TemplateQueryParameterBinder(getQueryMethod().getParameters(), values);
-    }
+	@Override
+	protected ParameterBinder createBinder(Object[] values) {
+		return new TemplateQueryParameterBinder(getQueryMethod().getParameters(), values);
+	}
 
-    @SuppressWarnings("unchecked")
-    private <T> T executeMethod(String methodName) {
-        Method countQueryMethod = ReflectionUtils.findMethod(JpaQueryMethod.class, methodName);
-        ReflectionUtils.makeAccessible(countQueryMethod);
-        return (T) ReflectionUtils.invokeMethod(countQueryMethod, method);
-    }
+	@SuppressWarnings("unchecked")
+	private <T> T executeMethod(String methodName) {
+		Method countQueryMethod = ReflectionUtils.findMethod(JpaQueryMethod.class, methodName);
+		ReflectionUtils.makeAccessible(countQueryMethod);
+		return (T) ReflectionUtils.invokeMethod(countQueryMethod, method);
+	}
 
-    private static class TemplateQueryParameterBinder extends ParameterBinder {
+	private static class TemplateQueryParameterBinder extends ParameterBinder {
 
-        private Object[] values;
+		private Object[] values;
 
-        private JpaParameters parameters;
+		private JpaParameters parameters;
 
-        /**
-         * Creates a new {@link ParameterBinder}.
-         *
-         * @param parameters must not be {@literal null}.
-         * @param values     must not be {@literal null}.
-         */
-        public TemplateQueryParameterBinder(JpaParameters parameters, Object[] values) {
-            super(parameters, values);
-            this.values = values;
-            this.parameters = parameters;
-        }
+		/**
+		 * Creates a new {@link ParameterBinder}.
+		 *
+		 * @param parameters must not be {@literal null}.
+		 * @param values     must not be {@literal null}.
+		 */
+		public TemplateQueryParameterBinder(JpaParameters parameters, Object[] values) {
+			super(parameters, values);
+			this.values = values;
+			this.parameters = parameters;
+		}
 
-    }
+	}
 }

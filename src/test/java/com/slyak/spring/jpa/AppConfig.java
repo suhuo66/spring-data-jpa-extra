@@ -27,36 +27,36 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(repositoryBaseClass = GenericJpaRepositoryImpl.class, repositoryFactoryBeanClass = GenericJpaRepositoryFactoryBean.class)
 class AppConfig {
 
-    @Bean
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).build();
-    }
+	@Bean
+	public DataSource dataSource() {
+		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).build();
+	}
 
-    @Bean
-    public JpaTransactionManager transactionManager(EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
-    }
+	@Bean
+	public JpaTransactionManager transactionManager(EntityManagerFactory emf) {
+		return new JpaTransactionManager(emf);
+	}
 
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setDatabase(Database.DERBY);
-        jpaVendorAdapter.setGenerateDdl(true);
-        return jpaVendorAdapter;
-    }
+	@Bean
+	public JpaVendorAdapter jpaVendorAdapter() {
+		HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+		jpaVendorAdapter.setDatabase(Database.DERBY);
+		jpaVendorAdapter.setGenerateDdl(true);
+		return jpaVendorAdapter;
+	}
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean lemfb = new LocalContainerEntityManagerFactoryBean();
-        lemfb.setDataSource(dataSource());
-        lemfb.setJpaVendorAdapter(jpaVendorAdapter());
-        lemfb.setPackagesToScan("com.slyak.spring.jpa");
-        return lemfb;
-    }
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean lemfb = new LocalContainerEntityManagerFactoryBean();
+		lemfb.setDataSource(dataSource());
+		lemfb.setJpaVendorAdapter(jpaVendorAdapter());
+		lemfb.setPackagesToScan("com.slyak.spring.jpa");
+		return lemfb;
+	}
 
-    @Bean
-    public FreemarkerSqlTemplates freemarkerSqlTemplates() {
-        return new FreemarkerSqlTemplates();
-    }
+	@Bean
+	public FreemarkerSqlTemplates freemarkerSqlTemplates() {
+		return new FreemarkerSqlTemplates();
+	}
 
 }

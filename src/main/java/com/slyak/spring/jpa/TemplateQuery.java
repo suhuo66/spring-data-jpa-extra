@@ -6,15 +6,15 @@ import java.lang.annotation.*;
 
 /**
  * .
- * <p>
+ * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/9.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @QueryAnnotation
 @Documented
 public @interface TemplateQuery {
-    String value() default "";
+	String value() default "";
 }

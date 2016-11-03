@@ -43,98 +43,116 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FreemarkerSqlTemplates implements ResourceLoaderAware, InitializingBean {
 
-    private static Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-    private static StringTemplateLoader sqlTemplateLoader = new StringTemplateLoader();
+	private static Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
-    static {
-        cfg.setTemplateLoader(sqlTemplateLoader);
-    }
+	private static StringTemplateLoader sqlTemplateLoader = new StringTemplateLoader();
 
-    protected final Log logger = LogFactory.getLog(getClass());
-    @PersistenceContext
-    private EntityManager em;
-    private DocumentLoader documentLoader = new DefaultDocumentLoader();
-    private EntityResolver entityResolver;
-    private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
-    private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
-    private Map<String, Resource> sqlResources = new ConcurrentHashMap<String, Resource>();
-    private String encoding = "UTF-8";
-    private String templateLocation = "classpath:/sqls";
-    private String templateBasePackage = "**";
-    private ResourceLoader resourceLoader;
+	static {
+		cfg.setTemplateLoader(sqlTemplateLoader);
+	}
 
-    public String process(String entityName, String methodName, Map<String, Object> model) {
-        reloadIfPossible(entityName);
-        try {
-            StringWriter writer = new StringWriter();
-            cfg.getTemplate(getTemplateKey(entityName, methodName), encoding).process(model, writer);
-            return writer.toString();
-        } catch (Exception e) {
-            logger.error("process template error. Entity name: " + entityName + " methodName:" + methodName, e);
-            return StringUtils.EMPTY;
-        }
-    }
+	protected final Log logger = LogFactory.getLog(getClass());
 
-    private String getTemplateKey(String entityName, String methodName) {
-        return entityName + ":" + methodName;
-    }
+	@PersistenceContext
+	private EntityManager em;
 
-    private void reloadIfPossible(String entityName) {
-        try {
-            Long lastModified = lastModifiedCache.get(entityName);
-            Resource resource = sqlResources.get(entityName);
-            long newLastModified = resource.lastModified();
-            if (lastModified == null || newLastModified > lastModified) {
-                InputSource inputSource = new InputSource(resource.getInputStream());
-                inputSource.setEncoding(encoding);
-                Document doc = documentLoader.loadDocument(inputSource, entityResolver, errorHandler, XmlValidationModeDetector.VALIDATION_XSD, false);
-                List<Element> sqes = DomUtils.getChildElementsByTagName(doc.getDocumentElement(), "sql");
-                for (Element sqle : sqes) {
-                    sqlTemplateLoader.putTemplate(getTemplateKey(entityName, sqle.getAttribute("name")), sqle.getTextContent());
-                }
-                lastModifiedCache.put(entityName, newLastModified);
-            }
-        } catch (Exception e) {
-            logger.error(e);
-        }
-    }
+	private DocumentLoader documentLoader = new DefaultDocumentLoader();
 
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-        this.entityResolver = new ResourceEntityResolver(resourceLoader);
-    }
+	private EntityResolver entityResolver;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Set<String> names = new HashSet<String>();
-        Set<EntityType<?>> entities = em.getMetamodel().getEntities();
-        for (EntityType<?> entity : entities) {
-            names.add(entity.getName());
-        }
-        if (!names.isEmpty()) {
-            String pattern;
-            if (StringUtils.isNotBlank(templateBasePackage)) {
-                pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + ClassUtils.convertClassNameToResourcePath(templateBasePackage) + "/**/*.xml";
-            } else {
-                pattern = templateLocation.contains("xml") ? templateLocation : templateLocation + "/**/*.xml";
-            }
-            PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(resourceLoader);
-            Resource[] resources = resourcePatternResolver.getResources(pattern);
-            for (Resource resource : resources) {
-                String resourceName = resource.getFilename().replace(".xml", "");
-                if (names.contains(resourceName)) {
-                    sqlResources.put(resourceName, resource);
-                }
-            }
-        }
-    }
+	private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
 
-    public void setTemplateLocation(String templateLocation) {
-        this.templateLocation = templateLocation;
-    }
+	private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
 
-    public void setTemplateBasePackage(String templateBasePackage) {
-        this.templateBasePackage = templateBasePackage;
-    }
+	private Map<String, Resource> sqlResources = new ConcurrentHashMap<String, Resource>();
+
+	private String encoding = "UTF-8";
+
+	private String templateLocation = "classpath:/sqls";
+
+	private String templateBasePackage = "**";
+
+	private ResourceLoader resourceLoader;
+
+	public String process(String entityName, String methodName, Map<String, Object> model) {
+		reloadIfPossible(entityName);
+		try {
+			StringWriter writer = new StringWriter();
+			cfg.getTemplate(getTemplateKey(entityName, methodName), encoding).process(model, writer);
+			return writer.toString();
+		}
+		catch (Exception e) {
+			logger.error("process template error. Entity name: " + entityName + " methodName:" + methodName, e);
+			return StringUtils.EMPTY;
+		}
+	}
+
+	private String getTemplateKey(String entityName, String methodName) {
+		return entityName + ":" + methodName;
+	}
+
+	private void reloadIfPossible(String entityName) {
+		try {
+			Long lastModified = lastModifiedCache.get(entityName);
+			Resource resource = sqlResources.get(entityName);
+			long newLastModified = resource.lastModified();
+			if (lastModified == null || newLastModified > lastModified) {
+				InputSource inputSource = new InputSource(resource.getInputStream());
+				inputSource.setEncoding(encoding);
+				Document doc = documentLoader.loadDocument(inputSource, entityResolver, errorHandler,
+						XmlValidationModeDetector.VALIDATION_XSD, false);
+				List<Element> sqes = DomUtils.getChildElementsByTagName(doc.getDocumentElement(), "sql");
+				for (Element sqle : sqes) {
+					sqlTemplateLoader
+							.putTemplate(getTemplateKey(entityName, sqle.getAttribute("name")), sqle.getTextContent());
+				}
+				lastModifiedCache.put(entityName, newLastModified);
+			}
+		}
+		catch (Exception e) {
+			logger.error(e);
+		}
+	}
+
+	@Override
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+		this.entityResolver = new ResourceEntityResolver(resourceLoader);
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Set<String> names = new HashSet<String>();
+		Set<EntityType<?>> entities = em.getMetamodel().getEntities();
+		for (EntityType<?> entity : entities) {
+			names.add(entity.getName());
+		}
+		if (!names.isEmpty()) {
+			String pattern;
+			if (StringUtils.isNotBlank(templateBasePackage)) {
+				pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+						ClassUtils.convertClassNameToResourcePath(templateBasePackage) + "/**/*.xml";
+			}
+			else {
+				pattern = templateLocation.contains("xml") ? templateLocation : templateLocation + "/**/*.xml";
+			}
+			PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(
+					resourceLoader);
+			Resource[] resources = resourcePatternResolver.getResources(pattern);
+			for (Resource resource : resources) {
+				String resourceName = resource.getFilename().replace(".xml", "");
+				if (names.contains(resourceName)) {
+					sqlResources.put(resourceName, resource);
+				}
+			}
+		}
+	}
+
+	public void setTemplateLocation(String templateLocation) {
+		this.templateLocation = templateLocation;
+	}
+
+	public void setTemplateBasePackage(String templateBasePackage) {
+		this.templateBasePackage = templateBasePackage;
+	}
 }
