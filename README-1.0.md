@@ -34,9 +34,29 @@ by xml
 	}
 ```
 
-- third create a file named Sample.sftl in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
+- third create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
-- The next coming version 2.0 , new template 'sftl' will take place of xml (xml is so heavy, but it is also supported).
+```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <sqls xmlns="http://www.slyak.com/schema/templatequery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.slyak.com/schema/templatequery http://www.slyak.com/schema/templatequery.xsd">
+        <sql name="findByContent">
+            <![CDATA[
+              SELECT * FROM t_sample WHERE 1=1
+              <#if content??>
+                AND content LIKE :content
+              </#if>
+            ]]>
+        </sql>
+        <sql name="findCustomVO">
+            <![CDATA[
+              SELECT id,name as viewName FROM t_sample WHERE id=:id
+            ]]>
+        </sql>
+    </sqls>
+```
+
+- xml is not recommended the next coming version 2.0 , new template 'sftl' will take place of xml (xml is so heavy, but it is also supported).
 sftl is an ftl template mixed with sqls. The template will be simplified as below. It can be recognized in Intellij IDEA , follow thease steps:
 settings->Editor->File Types , find "Freemarker Template" and register a new type named '*.sftl',choose it's 'Template Data Language' such as 'MYSQL'.
 
@@ -113,6 +133,3 @@ Entity assemblers can assembler entity with other entities, such as one to many 
 
 ## Change Log
 [CHANGELOG](./CHANGELOG.md)
-
---How to use in old version ( <2.0 )
-<a href="./README-1.0.md">old version guide</a>
