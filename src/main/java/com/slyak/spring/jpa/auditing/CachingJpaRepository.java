@@ -1,6 +1,5 @@
 package com.slyak.spring.jpa.auditing;
 
-import com.fablezj.core.cache.CacheAutoConfiguration;
 import com.slyak.spring.jpa.GenericJpaRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,11 +16,11 @@ import java.util.List;
 @NoRepositoryBean
 public interface CachingJpaRepository<T, ID extends Serializable> extends GenericJpaRepository<T, ID> {
 
-    @Cacheable(value = "dict", keyGenerator = CacheAutoConfiguration.REPO_KEY_GENERATOR)
+    @Cacheable(value = "dict")
     @Override
     T findOne(ID id);
 
-    @Cacheable(value = "dict", keyGenerator = CacheAutoConfiguration.REPO_KEY_GENERATOR)
+    @Cacheable(value = "dict")
     @Override
     List<T> findAll();
 
