@@ -6,30 +6,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.xml.DefaultDocumentLoader;
-import org.springframework.beans.factory.xml.DocumentLoader;
-import org.springframework.beans.factory.xml.ResourceEntityResolver;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.xml.DomUtils;
-import org.springframework.util.xml.SimpleSaxErrorHandler;
-import org.springframework.util.xml.XmlValidationModeDetector;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,26 +42,28 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	private String encoding = "UTF-8";
+
 	@PersistenceContext
 	private EntityManager em;
-
-	private DocumentLoader documentLoader = new DefaultDocumentLoader();
-
-	private EntityResolver entityResolver;
-
-	private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
 
 	private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
 
 	private Map<String, Resource> sqlResources = new ConcurrentHashMap<String, Resource>();
-
-	private String encoding = "UTF-8";
 
 	private String templateLocation = "classpath:/sqls";
 
 	private String templateBasePackage = "**";
 
 	private ResourceLoader resourceLoader;
+
+	private String suffix = ".xml";
+
+	private Map<String, NamedTemplateResolver> suffixResolvers = new HashMap<String, NamedTemplateResolver>();
+
+	{
+		suffixResolvers.put(".fsql", new FsqlNamedTemplateResolver());
+	}
 
 	public String process(String entityName, String methodName, Map<String, Object> model) {
 		reloadIfPossible(entityName);
@@ -91,21 +82,19 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 		return entityName + ":" + methodName;
 	}
 
-	private void reloadIfPossible(String entityName) {
+	private void reloadIfPossible(final String entityName) {
 		try {
 			Long lastModified = lastModifiedCache.get(entityName);
 			Resource resource = sqlResources.get(entityName);
 			long newLastModified = resource.lastModified();
 			if (lastModified == null || newLastModified > lastModified) {
-				InputSource inputSource = new InputSource(resource.getInputStream());
-				inputSource.setEncoding(encoding);
-				Document doc = documentLoader.loadDocument(inputSource, entityResolver, errorHandler,
-						XmlValidationModeDetector.VALIDATION_XSD, false);
-				List<Element> sqes = DomUtils.getChildElementsByTagName(doc.getDocumentElement(), "sql");
-				for (Element sqle : sqes) {
-					sqlTemplateLoader
-							.putTemplate(getTemplateKey(entityName, sqle.getAttribute("name")), sqle.getTextContent());
-				}
+				suffixResolvers.get(suffix).doInTemplateResource(resource, new NamedTemplateCallback() {
+					@Override
+					public void process(String templateName, String content) {
+						sqlTemplateLoader
+								.putTemplate(getTemplateKey(entityName, templateName), content);
+					}
+				});
 				lastModifiedCache.put(entityName, newLastModified);
 			}
 		}
@@ -117,7 +106,9 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 	@Override
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
-		this.entityResolver = new ResourceEntityResolver(resourceLoader);
+		XmlNamedTemplateResolver xmlNamedTemplateResolver = new XmlNamedTemplateResolver(resourceLoader);
+		xmlNamedTemplateResolver.setEncoding(encoding);
+		this.suffixResolvers.put(".xml", xmlNamedTemplateResolver);
 	}
 
 	@Override
@@ -127,20 +118,23 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 		for (EntityType<?> entity : entities) {
 			names.add(entity.getName());
 		}
+
+		String suffixPattern = "/**/*" + suffix;
+
 		if (!names.isEmpty()) {
 			String pattern;
 			if (StringUtils.isNotBlank(templateBasePackage)) {
 				pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-						ClassUtils.convertClassNameToResourcePath(templateBasePackage) + "/**/*.xml";
+						ClassUtils.convertClassNameToResourcePath(templateBasePackage) + suffixPattern;
 			}
 			else {
-				pattern = templateLocation.contains("xml") ? templateLocation : templateLocation + "/**/*.xml";
+				pattern = templateLocation.contains(suffix) ? templateLocation : templateLocation + suffixPattern;
 			}
 			PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(
 					resourceLoader);
 			Resource[] resources = resourcePatternResolver.getResources(pattern);
 			for (Resource resource : resources) {
-				String resourceName = resource.getFilename().replace(".xml", "");
+				String resourceName = resource.getFilename().replace(suffix, "");
 				if (names.contains(resourceName)) {
 					sqlResources.put(resourceName, resource);
 				}
@@ -154,5 +148,9 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 
 	public void setTemplateBasePackage(String templateBasePackage) {
 		this.templateBasePackage = templateBasePackage;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
 	}
 }

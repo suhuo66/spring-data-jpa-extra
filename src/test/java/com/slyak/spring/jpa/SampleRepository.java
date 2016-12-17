@@ -2,6 +2,7 @@ package com.slyak.spring.jpa;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -25,4 +26,8 @@ public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
 
 	@TemplateQuery
 	List<SampleDTO> findDtos();
+
+	// #{name?:'and content like :name'}
+	@Query(nativeQuery = true, value = "select * from t_sample where content like ?1")
+	List<SampleDTO> findDtos2(String name);
 }

@@ -34,7 +34,7 @@ by xml
 	}
 ```
 
-- third create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
+- third create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.content-location</font>)
 
 ```xml
     <?xml version="1.0" encoding="utf-8" ?>
@@ -80,10 +80,10 @@ or with xml
 ## 2 Miniute Tutorial
 
 ### Template Query
-Methods annotated with @TemplateQuery tells QueryLookupStrategy to look up query by template,this is often used by dynamic query.
+Methods annotated with @TemplateQuery tells QueryLookupStrategy to look up query by content,this is often used by dynamic query.
 
 ### Template Query Object
-Object annotated with @TemplateQueryObject tells template process engine render params provided by object properties.
+Object annotated with @TemplateQueryObject tells content process engine render params provided by object properties.
 
 ### Entity Assemblers
 Entity assemblers can assembler entity with other entities, such as one to many relation or one to one relation.
@@ -110,7 +110,7 @@ Entity assemblers can assembler entity with other entities, such as one to many 
 
 
 ## TODO List
-- More types of template support (now freemarker)
+- More types of content support (now freemarker)
 - More JPA comparison support (now hibernate)
 - Performance test and do some optimization
 - More other useful features

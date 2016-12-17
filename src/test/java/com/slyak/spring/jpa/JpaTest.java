@@ -60,4 +60,12 @@ public class JpaTest {
 		List<Sample> samples = sampleRepository.findByTemplateQueryObject(sq, null);
 		Assert.assertTrue(samples.size() == 10);
 	}
+
+
+	@Test
+	public void findBySpringElQuery() {
+		List<SampleDTO> dtos = sampleRepository.findDtos2("world");
+		Assert.assertTrue(dtos.size() == 10);
+	}
+
 }

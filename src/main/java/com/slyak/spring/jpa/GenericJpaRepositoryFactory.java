@@ -44,11 +44,11 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
 		this.entityManager = entityManager;
 		this.extractor = PersistenceProvider.fromEntityManager(entityManager);
 
-		final AssmblerInterceptor assmblerInterceptor = new AssmblerInterceptor();
+		final AssemblerInterceptor assemblerInterceptor = new AssemblerInterceptor();
 		addRepositoryProxyPostProcessor(new RepositoryProxyPostProcessor() {
 			@Override
 			public void postProcess(ProxyFactory factory, RepositoryInformation repositoryInformation) {
-				factory.addAdvice(assmblerInterceptor);
+				factory.addAdvice(assemblerInterceptor);
 			}
 		});
 	}
@@ -88,6 +88,7 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
 		return assemblers.get(clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void massemble(Iterable iterable) {
 		if (!iterable.iterator().hasNext()) {
 			return;
@@ -112,7 +113,8 @@ public class GenericJpaRepositoryFactory extends JpaRepositoryFactory {
 		return (Class) ((ParameterizedType) clzz.getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 
-	public class AssmblerInterceptor implements MethodInterceptor, AfterAdvice {
+	@SuppressWarnings("unchecked")
+	public class AssemblerInterceptor implements MethodInterceptor, AfterAdvice {
 
 		@Override
 		public Object invoke(MethodInvocation invocation) throws Throwable {
