@@ -34,7 +34,7 @@ by xml
 	}
 ```
 
-- third create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.content-location</font>)
+- third create a file named Sample.xml in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
 ```xml
     <?xml version="1.0" encoding="utf-8" ?>
