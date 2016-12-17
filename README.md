@@ -114,5 +114,5 @@ Entity assemblers can assembler entity with other entities, such as one to many 
 ## Change Log
 [CHANGELOG](./CHANGELOG.md)
 
---How to use in old version ( <2.0 )
+## How to use in old version ( <2.0 )
 <a href="./README-1.0.md">old version guide</a>
