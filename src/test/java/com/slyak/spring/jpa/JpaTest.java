@@ -64,7 +64,7 @@ public class JpaTest {
 
 	@Test
 	public void findBySpringElQuery() {
-		List<SampleDTO> dtos = sampleRepository.findDtos2("world");
+		List<SampleDTO> dtos = sampleRepository.findDtos2("%world%");
 		Assert.assertTrue(dtos.size() == 10);
 	}
 

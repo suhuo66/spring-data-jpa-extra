@@ -56,7 +56,9 @@ class AppConfig {
 
 	@Bean
 	public FreemarkerSqlTemplates freemarkerSqlTemplates() {
-		return new FreemarkerSqlTemplates();
+		FreemarkerSqlTemplates templates = new FreemarkerSqlTemplates();
+		templates.setSuffix(".sftl");
+		return templates;
 	}
 
 }

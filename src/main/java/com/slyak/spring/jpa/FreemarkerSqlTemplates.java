@@ -17,10 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -62,7 +59,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 	private Map<String, NamedTemplateResolver> suffixResolvers = new HashMap<String, NamedTemplateResolver>();
 
 	{
-		suffixResolvers.put(".fsql", new FsqlNamedTemplateResolver());
+		suffixResolvers.put(".sftl", new FsqlNamedTemplateResolver());
 	}
 
 	public String process(String entityName, String methodName, Map<String, Object> model) {
@@ -88,13 +85,17 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 			Resource resource = sqlResources.get(entityName);
 			long newLastModified = resource.lastModified();
 			if (lastModified == null || newLastModified > lastModified) {
-				suffixResolvers.get(suffix).doInTemplateResource(resource, new NamedTemplateCallback() {
-					@Override
-					public void process(String templateName, String content) {
-						sqlTemplateLoader
-								.putTemplate(getTemplateKey(entityName, templateName), content);
-					}
-				});
+				Iterator<Void> iterator = suffixResolvers.get(suffix)
+						.doInTemplateResource(resource, new NamedTemplateCallback() {
+							@Override
+							public void process(String templateName, String content) {
+								sqlTemplateLoader
+										.putTemplate(getTemplateKey(entityName, templateName), content);
+							}
+						});
+				while (iterator.hasNext()) {
+					iterator.next();
+				}
 				lastModifiedCache.put(entityName, newLastModified);
 			}
 		}
@@ -152,5 +153,9 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
 	}
 }
