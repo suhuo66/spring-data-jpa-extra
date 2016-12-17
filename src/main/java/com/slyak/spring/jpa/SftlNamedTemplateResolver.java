@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author stormning on 2016/12/17.
  */
-public class FsqlNamedTemplateResolver implements NamedTemplateResolver {
+public class SftlNamedTemplateResolver implements NamedTemplateResolver {
 
 	private String encoding = "UTF-8";
 

@@ -59,7 +59,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 	private Map<String, NamedTemplateResolver> suffixResolvers = new HashMap<String, NamedTemplateResolver>();
 
 	{
-		suffixResolvers.put(".sftl", new FsqlNamedTemplateResolver());
+		suffixResolvers.put(".sftl", new SftlNamedTemplateResolver());
 	}
 
 	public String process(String entityName, String methodName, Map<String, Object> model) {
