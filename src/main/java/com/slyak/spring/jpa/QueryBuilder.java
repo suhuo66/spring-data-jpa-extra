@@ -27,6 +27,7 @@ public class QueryBuilder {
 	private static final Pattern ORDERBY_PATTERN_1 = Pattern
 			.compile("order\\s+by.+?\\)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
+	//TODO cache transformers
 	public static <C> Query transform(Query query, Class<C> clazz) {
 		if (Map.class.isAssignableFrom(clazz)) {
 			return query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -115,16 +116,16 @@ public class QueryBuilder {
 			Map<String, Object> description = new HashMap<String, Object>();
 			if (bean instanceof DynaBean) {
 				DynaProperty[] descriptors = ((DynaBean) bean).getDynaClass().getDynaProperties();
-				for (int i = 0; i < descriptors.length; i++) {
-					String name = descriptors[i].getName();
+				for (DynaProperty descriptor : descriptors) {
+					String name = descriptor.getName();
 					description.put(name, BeanUtils.getProperty(bean, name));
 				}
 			}
 			else {
 				PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(bean);
-				for (int i = 0; i < descriptors.length; i++) {
-					String name = descriptors[i].getName();
-					if (PropertyUtils.getReadMethod(descriptors[i]) != null) {
+				for (PropertyDescriptor descriptor : descriptors) {
+					String name = descriptor.getName();
+					if (PropertyUtils.getReadMethod(descriptor) != null) {
 						description.put(name, PropertyUtils.getNestedProperty(bean, name));
 					}
 				}
