@@ -30,6 +30,8 @@ import java.util.Map;
  */
 public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 
+	private boolean useJpaSpec = false;
+
 	/**
 	 * Creates a new {@link AbstractJpaQuery} from the given {@link JpaQueryMethod}.
 	 *
@@ -96,7 +98,7 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 		//must be hibernate QueryImpl
 		QueryImpl query;
 
-		if (getQueryMethod().isQueryForEntity()) {
+		if (getQueryMethod().isQueryForEntity() && useJpaSpec) {
 			query = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(queryString, objectType));
 		}
 		else {
