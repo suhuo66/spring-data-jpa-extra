@@ -57,7 +57,7 @@ by xml
 ```
 
 - xml is not recommended the next coming version 2.0 , new template 'sftl' will take place of xml (xml is so heavy, but it is also supported).
-sftl is an ftl template mixed with sqls. The template will be simplified as below. It can be recognized in Intellij IDEA , follow thease steps:
+sftl is a ftl template mixed with sqls. The template will be simplified as below. It can be recognized in Intellij IDEA , follow thease steps:
 settings->Editor->File Types , find "Freemarker Template" and register a new type named '*.sftl',choose it's 'Template Data Language' such as 'MYSQL'.
 
 ```sql
