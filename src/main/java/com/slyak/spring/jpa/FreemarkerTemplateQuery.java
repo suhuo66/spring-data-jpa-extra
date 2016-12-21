@@ -98,7 +98,7 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 		//must be hibernate QueryImpl
 		QueryImpl query;
 
-		if (getQueryMethod().isQueryForEntity() && useJpaSpec) {
+		if (useJpaSpec && getQueryMethod().isQueryForEntity()) {
 			query = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(queryString, objectType));
 		}
 		else {
