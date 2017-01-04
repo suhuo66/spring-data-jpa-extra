@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * .
+ * TODO use exist configuration.
  * <p/>
  *
  * @author <a href="mailto:stormning@163.com">stormning</a>
