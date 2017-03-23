@@ -36,7 +36,7 @@ by xml
 
 - third create a file named Sample.sftl in your classpath:/sqls/ (you can change this path by setting placeholder <font color="#008B8B">spring.jpa.template-location</font>)
 
-- The next coming version 2.0 , new template 'sftl' will take place of xml (xml is so heavy, but it is also supported).
+- In version 2.0.0.RELEASE , new template 'sftl' take place of xml (xml is complex, but it is also supported).
 sftl is a ftl template mixed with sqls. The template will be simplified as below. It can be recognized in Intellij IDEA , follow thease steps:
 settings->Editor->File Types , find "Freemarker Template" and register a new type named '*.sftl',choose it's 'Template Data Language' such as 'MYSQL'.
 
@@ -59,7 +59,7 @@ you can use it by using source code or adding a maven dependency
     <dependency>
         <groupId>com.slyak</groupId>
         <artifactId>spring-data-jpa-extra</artifactId>
-        <version>1.2.0.RELEASE</version>
+        <version>2.0.0.RELEASE</version>
     </dependency>
 ```
 config with annotation
