@@ -102,9 +102,9 @@ public class QueryBuilder {
 		if (object == null) {
 			return false;
 		}
-		if (object instanceof Number && ((Number) object).longValue() == 0) {
+		/*if (object instanceof Number && ((Number) object).longValue() == 0) {
 			return false;
-		}
+		}*/
 		return !(object instanceof Collection && CollectionUtils.isEmpty((Collection<?>) object));
 	}
 
