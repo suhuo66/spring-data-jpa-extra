@@ -61,10 +61,11 @@ public class QueryBuilder {
             if (canClean(part)) {
                 matcher.appendReplacement(sb, "");
             } else {
-                matcher.appendTail(sb);
+                matcher.appendReplacement(sb, part);
             }
             i++;
         }
+        matcher.appendTail(sb);
         return sb.toString();
     }
 
@@ -161,8 +162,23 @@ public class QueryBuilder {
         String t1 = "select * from user order by id";
         String t2 = "select * from abc order by xxx(convert( resName using gbk )) collate gbk_chinese_ci asc";
         String t3 = "select count * from ((select * from aaa group by a order by a) union all (select * from aaa group by a order by a))";
+        String t4 = "SELECT\n" +
+                "  t1.*,t2.name AS dictionaryName,t3.name AS classifyName\n" +
+                "FROM res_data_element t1 LEFT JOIN sys_business_dictionary t2 ON  t1.dictionary_id = t2.id\n" +
+                "  LEFT JOIN sys_business_dictionary t3 ON  t1.classify = t3.id\n" +
+                "WHERE  1=1\n" +
+                "       AND  t1.is_history_version = 1\n" +
+                "       AND t1.status = 1\n" +
+                "       AND (t1.name LIKE '%${nameOrCodeOrENameOrCompany}%'\n" +
+                "         OR\n" +
+                "         t1.code LIKE '%${nameOrCodeOrENameOrCompany}%'\n" +
+                "         OR\n" +
+                "         t1.englishname LIKE '%${nameOrCodeOrENameOrCompany}%'\n" +
+                "         OR\n" +
+                "         t1.submit_company LIKE '%${nameOrCodeOrENameOrCompany}%')";
         System.out.println(QueryBuilder.toCountQuery(t1));
         System.out.println(QueryBuilder.toCountQuery(t2));
         System.out.println(QueryBuilder.toCountQuery(t3));
+//        System.out.println(QueryBuilder.toCountQuery(t4));
     }
 }

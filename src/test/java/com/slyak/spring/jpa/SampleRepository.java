@@ -29,5 +29,5 @@ public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
 
 	// #{name?:'and content like :name'}
 	@Query(nativeQuery = true, value = "select * from t_sample where content like ?1")
-	List<SampleDTO> findDtos2(String name);
+	List<Sample> findDtos2(String name);
 }
