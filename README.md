@@ -42,8 +42,8 @@ by xml
 sftl is a ftl template mixed with sqls. The template will be simplified as below. It can be recognized in Intellij IDEA , follow these steps:
 settings->Editor->File Types , find "Freemarker Template" and register a new type named '*.sftl',choose it's 'Template Data Language' such as 'MYSQL'.
 
-<img src="./filetypes.gif" width = "200" alt="SLYAK"/>
-<img src="./sftl.gif" width = "200" alt="SLYAK"/>
+<img src="./filetypes.gif" width = "500" alt="SLYAK"/>
+<img src="./sftl.gif" width = "500" alt="SLYAK"/>
 
 ```sql
 --findByContent
