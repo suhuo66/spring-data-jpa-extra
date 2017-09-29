@@ -64,7 +64,7 @@ you can use it by using source code or adding a maven dependency
     <dependency>
         <groupId>com.slyak</groupId>
         <artifactId>spring-data-jpa-extra</artifactId>
-        <version>2.0.3.RELEASE</version>
+        <version>2.0.4.RELEASE</version>
     </dependency>
 ```
 config with annotation
