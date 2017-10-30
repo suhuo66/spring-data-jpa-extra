@@ -20,6 +20,10 @@ import java.io.Serializable;
 public class GenericJpaRepositoryFactoryBean<R extends JpaRepository<T, I>, T, I extends Serializable>
 		extends JpaRepositoryFactoryBean<R, T, I> implements ApplicationContextAware {
 
+	public GenericJpaRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
+		super(repositoryInterface);
+	}
+
 	@Override
 	protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
 		RepositoryFactorySupport factorySupport = new GenericJpaRepositoryFactory(entityManager);
