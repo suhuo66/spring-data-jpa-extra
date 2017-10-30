@@ -67,6 +67,8 @@ you can use it by using source code or adding a maven dependency
         <version>2.0.4.RELEASE</version>
     </dependency>
 ```
+<b>notice</b>: if the spring-data-jpa version >= 1.11.x (spring-boot version >= 1.5.x) please use 2.1.x.RELEASE .
+
 config with annotation
 ```java
 @EnableJpaRepositories(basePackages = "your.packages", repositoryBaseClass = GenericJpaRepositoryImpl.class, repositoryFactoryBeanClass = GenericJpaRepositoryFactoryBean.class)
