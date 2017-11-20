@@ -93,26 +93,34 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
         return params;
     }
 
-    public QueryImpl createJpaQuery(String queryString) {
+    public Query createJpaQuery(String queryString) {
         Class<?> objectType = getQueryMethod().getReturnedObjectType();
+
+        //get original proxy query.
+        Query oriProxyQuery;
 
         //must be hibernate QueryImpl
         QueryImpl query;
 
         if (useJpaSpec && getQueryMethod().isQueryForEntity()) {
-            query = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(queryString, objectType));
-        } else {
-            query = AopTargetUtils.getTarget(getEntityManager().createNativeQuery(queryString));
-            //find generic type
-            ClassTypeInformation<?> ctif = ClassTypeInformation.from(objectType);
-            TypeInformation<?> actualType = ctif.getActualType();
-            Class<?> genericType = actualType.getType();
+            oriProxyQuery = getEntityManager().createNativeQuery(queryString, objectType);
 
-            if (genericType != null && genericType != Void.class) {
-                QueryBuilder.transform(query.getHibernateQuery(), genericType);
-            }
-        }
-        return query;
+//            QueryImpl query = AopTargetUtils.getTarget(oriProxyQuery);
+        } else {
+            oriProxyQuery = getEntityManager().createNativeQuery(queryString);
+
+			query = AopTargetUtils.getTarget(oriProxyQuery);
+			//find generic type
+			ClassTypeInformation<?> ctif = ClassTypeInformation.from(objectType);
+			TypeInformation<?> actualType = ctif.getActualType();
+			Class<?> genericType = actualType.getType();
+
+			if (genericType != null && genericType != Void.class) {
+				QueryBuilder.transform(query.getHibernateQuery(), genericType);
+			}
+		}
+        //return the original proxy query, for a series of JPA actions, e.g.:close em.
+        return oriProxyQuery;
     }
 
     private String getEntityName() {
@@ -125,13 +133,18 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 
     @Override
     protected TypedQuery<Long> doCreateCountQuery(Object[] values) {
-        QueryImpl nativeQuery = AopTargetUtils
-                .getTarget(getEntityManager().createNativeQuery(QueryBuilder.toCountQuery(getQuery(values))));
-        return bind(nativeQuery, values);
+        TypedQuery query = (TypedQuery) getEntityManager()
+                .createNativeQuery(QueryBuilder.toCountQuery(getQuery(values)));
+        bind(query, values);
+        return query;
     }
 
-    public QueryImpl bind(QueryImpl query, Object[] values) {
-        SQLQuery sqlQuery = (SQLQuery) query.getHibernateQuery();
+    public Query bind(Query query, Object[] values) {
+    	//get proxy target if exist.
+        //must be hibernate QueryImpl
+        QueryImpl targetQuery = AopTargetUtils.getTarget(query);
+
+		SQLQuery sqlQuery = (SQLQuery) targetQuery.getHibernateQuery();
         Map<String, Object> params = getParams(values);
         if (!CollectionUtils.isEmpty(params)) {
             QueryBuilder.setParams(sqlQuery, params);
