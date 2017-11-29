@@ -16,6 +16,7 @@ import org.springframework.util.ClassUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -127,18 +128,25 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 			if (StringUtils.isNotBlank(templateBasePackage)) {
 				pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
 						ClassUtils.convertClassNameToResourcePath(templateBasePackage) + suffixPattern;
+
+				loadPatternResource(names, pattern);
 			}
-			else {
+			if (StringUtils.isNotBlank(templateLocation)) {
 				pattern = templateLocation.contains(suffix) ? templateLocation : templateLocation + suffixPattern;
+
+				loadPatternResource(names, pattern);
 			}
-			PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(
-					resourceLoader);
-			Resource[] resources = resourcePatternResolver.getResources(pattern);
-			for (Resource resource : resources) {
-				String resourceName = resource.getFilename().replace(suffix, "");
-				if (names.contains(resourceName)) {
-					sqlResources.put(resourceName, resource);
-				}
+		}
+	}
+
+	private void loadPatternResource(Set<String> names, String pattern) throws IOException {
+		PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(
+				resourceLoader);
+		Resource[] resources = resourcePatternResolver.getResources(pattern);
+		for (Resource resource : resources) {
+			String resourceName = resource.getFilename().replace(suffix, "");
+			if (names.contains(resourceName)) {
+				sqlResources.put(resourceName, resource);
 			}
 		}
 	}
