@@ -16,6 +16,7 @@ import org.springframework.util.ClassUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
@@ -133,8 +134,20 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 			}
 			if (StringUtils.isNotBlank(templateLocation)) {
 				pattern = templateLocation.contains(suffix) ? templateLocation : templateLocation + suffixPattern;
-
-				loadPatternResource(names, pattern);
+				try {
+					loadPatternResource(names, pattern);
+				}
+				catch (FileNotFoundException e) {
+					if ("classpath:/sqls".equals(templateLocation)) {
+						//warn: default value
+						logger.warn("templateLocation[" + templateLocation + "] not exist!");
+						logger.warn(e.getMessage());
+					}
+					else {
+						//throw: custom value.
+						throw e;
+					}
+				}
 			}
 		}
 	}
