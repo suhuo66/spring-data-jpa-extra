@@ -48,7 +48,7 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 
 	private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
 
-	private Map<String, Resource> sqlResources = new ConcurrentHashMap<String, Resource>();
+	private Map<String, List<Resource>> sqlResources = new ConcurrentHashMap<String, List<Resource>>();
 
 	private String templateLocation = "classpath:/sqls";
 
@@ -84,21 +84,43 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 	private void reloadIfPossible(final String entityName) {
 		try {
 			Long lastModified = lastModifiedCache.get(entityName);
-			Resource resource = sqlResources.get(entityName);
-			long newLastModified = resource.lastModified();
-			if (lastModified == null || newLastModified > lastModified) {
-				Iterator<Void> iterator = suffixResolvers.get(suffix)
-						.doInTemplateResource(resource, new NamedTemplateCallback() {
-							@Override
-							public void process(String templateName, String content) {
-								sqlTemplateLoader
-										.putTemplate(getTemplateKey(entityName, templateName), content);
-							}
-						});
-				while (iterator.hasNext()) {
-					iterator.next();
+			List<Resource> resourceList = sqlResources.get(entityName);
+
+			long newLastModified = 0;
+			for (Resource resource : resourceList) {
+				if (newLastModified == 0) {
+					newLastModified = resource.lastModified();
 				}
+				else {
+					//get the last modified.
+					newLastModified = newLastModified > resource.lastModified() ?
+							newLastModified : resource.lastModified();
+				}
+			}
+
+			//check modified for cache.
+			if (lastModified == null || newLastModified > lastModified) {
 				lastModifiedCache.put(entityName, newLastModified);
+
+				//process template.
+				for (Resource resource : resourceList) {
+					Iterator<Void> iterator = suffixResolvers.get(suffix)
+							.doInTemplateResource(resource, new NamedTemplateCallback() {
+								@Override
+								public void process(String templateName, String content) {
+									String key = getTemplateKey(entityName, templateName);
+									Object src = sqlTemplateLoader.findTemplateSource(key);
+									if (src != null) {
+										logger.warn("found duplicate template key, will replace the value, key:" + key);
+									}
+									sqlTemplateLoader
+											.putTemplate(getTemplateKey(entityName, templateName), content);
+								}
+							});
+					while (iterator.hasNext()) {
+						iterator.next();
+					}
+				}
 			}
 		}
 		catch (Exception e) {
@@ -159,7 +181,16 @@ public class FreemarkerSqlTemplates implements ResourceLoaderAware, Initializing
 		for (Resource resource : resources) {
 			String resourceName = resource.getFilename().replace(suffix, "");
 			if (names.contains(resourceName)) {
-				sqlResources.put(resourceName, resource);
+				//allow multi resource.
+				List<Resource> resourceList = null;
+				if (sqlResources.containsKey(resourceName)) {
+					resourceList = sqlResources.get(resourceName);
+				}
+				else {
+					resourceList = new LinkedList<Resource>();
+					sqlResources.put(resourceName, resourceList);
+				}
+				resourceList.add(resource);
 			}
 		}
 	}
