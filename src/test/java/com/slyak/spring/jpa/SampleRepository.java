@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * .
@@ -30,4 +31,7 @@ public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
 	// #{name?:'and content like :name'}
 	@Query(nativeQuery = true, value = "select * from t_sample where content like ?1")
 	List<Sample> findDtos2(String name);
+
+	@TemplateQuery
+	List<Map<String,Object>> findMap();
 }

@@ -113,8 +113,10 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 			//find generic type
 			ClassTypeInformation<?> ctif = ClassTypeInformation.from(objectType);
 			TypeInformation<?> actualType = ctif.getActualType();
+			if (actualType == null){
+			    actualType = ctif.getRawTypeInformation();
+            }
 			Class<?> genericType = actualType.getType();
-
 			if (genericType != null && genericType != Void.class) {
 				QueryBuilder.transform(query.getHibernateQuery(), genericType);
 			}

@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * .
@@ -65,6 +66,12 @@ public class JpaTest {
 	public void findBySpringElQuery() {
 		List<Sample> dtos = sampleRepository.findDtos2("%world%");
 		Assert.assertTrue(dtos.size() == 10);
+	}
+
+	@Test
+	public void findMap(){
+		List<Map<String,Object>> listMaps = sampleRepository.findMap();
+		Assert.assertTrue(listMaps.size() == 10);
 	}
 
 }
