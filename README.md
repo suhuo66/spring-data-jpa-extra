@@ -60,7 +60,7 @@ SELECT id,name as viewName FROM t_sample WHERE id=:id
 
 you can use it by using source code or adding a maven dependency
 
-<b>notice</b>: if the spring-data-jpa version >= 1.11.x (spring-boot version >= 1.5.x) please use 2.1.x.RELEASE .
+<font color='red'><b>notice</b>: if the spring-data-jpa version >= 1.11.x (spring-boot version >= 1.5.x) please use 2.1.x.RELEASE .</font>
 
 ```xml
     <dependency>
