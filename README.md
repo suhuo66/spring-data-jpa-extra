@@ -30,9 +30,9 @@ by xml
 ```java
 	public interface SampleRepository extends GenericJpaRepository<Sample, Long> {
 		@TemplateQuery
-		Page<Sample> findByContent(String content, Pageable pageable);
+		Page<Sample> findByContent(@Param("content")String content, Pageable pageable);
 		@TemplateQuery
-		CustomVO findCustomVO(Long id);
+		CustomVO findCustomVO(@Param("id")Long id);
 	}
 ```
 
