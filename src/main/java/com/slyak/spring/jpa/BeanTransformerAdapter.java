@@ -131,14 +131,12 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
         this.mappedProperties = new HashSet<String>();
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(mappedClass);
         for (PropertyDescriptor pd : pds) {
-            if (pd.getWriteMethod() != null) {
-                this.mappedFields.put(pd.getName().toLowerCase(), pd);
-                String underscoredName = underscoreName(pd.getName());
-                if (!pd.getName().toLowerCase().equals(underscoredName)) {
-                    this.mappedFields.put(underscoredName, pd);
-                }
-                this.mappedProperties.add(pd.getName());
+            this.mappedFields.put(pd.getName().toLowerCase(), pd);
+            String underscoredName = underscoreName(pd.getName());
+            if (!pd.getName().toLowerCase().equals(underscoredName)) {
+                this.mappedFields.put(underscoredName, pd);
             }
+            this.mappedProperties.add(pd.getName());
         }
     }
 

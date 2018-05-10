@@ -7,6 +7,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.beans.PropertyDescriptor;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,16 +31,19 @@ public class QueryBuilder {
     private static final Pattern ORDERBY_PATTERN_1 = Pattern
             .compile("order\\s+by.+?$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
-    //TODO cache transformers
+    private static Map<Class, ResultTransformer> transformerCache = new ConcurrentHashMap<>();
+
     public static <C> Query transform(Query query, Class<C> clazz) {
+        ResultTransformer transformer;
         if (Map.class.isAssignableFrom(clazz)) {
-            return query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            transformer = Transformers.ALIAS_TO_ENTITY_MAP;
         } else if (Number.class.isAssignableFrom(clazz) || clazz.isPrimitive() || String.class.isAssignableFrom(clazz) ||
                 Date.class.isAssignableFrom(clazz)) {
-            return query.setResultTransformer(new SmartTransformer(clazz));
+            transformer = transformerCache.computeIfAbsent(clazz, SmartTransformer::new);
         } else {
-            return query.setResultTransformer(new BeanTransformerAdapter<C>(clazz));
+            transformer = transformerCache.computeIfAbsent(clazz, BeanTransformerAdapter::new);
         }
+        return query.setResultTransformer(transformer);
     }
 
     public static SQLQuery toSQLQuery(EntityManager em, String nativeQuery, Object beanOrMap) {
