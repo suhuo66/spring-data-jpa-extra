@@ -1,8 +1,7 @@
 package com.slyak.spring.jpa;
 
 import com.slyak.util.AopTargetUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.jpa.internal.QueryImpl;
+import org.hibernate.jpa.HibernateQuery;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.AbstractJpaQuery;
 import org.springframework.data.jpa.repository.query.JpaParameters;
@@ -31,15 +30,15 @@ import java.util.Map;
  */
 public class FreemarkerTemplateQuery extends AbstractJpaQuery {
 
-    private boolean useJpaSpec = false;
+    private boolean useJpaSpec = true;
 
     /**
      * Creates a new {@link AbstractJpaQuery} from the given {@link JpaQueryMethod}.
      *
-     * @param method
-     * @param em
+     * @param method jpa query method
+     * @param em entity manager
      */
-    public FreemarkerTemplateQuery(JpaQueryMethod method, EntityManager em) {
+    FreemarkerTemplateQuery(JpaQueryMethod method, EntityManager em) {
         super(method, em);
     }
 
@@ -93,34 +92,32 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
         return params;
     }
 
-    public Query createJpaQuery(String queryString) {
+    private Query createJpaQuery(String queryString) {
         Class<?> objectType = getQueryMethod().getReturnedObjectType();
 
         //get original proxy query.
         Query oriProxyQuery;
 
         //must be hibernate QueryImpl
-        QueryImpl query;
+        HibernateQuery query;
 
         if (useJpaSpec && getQueryMethod().isQueryForEntity()) {
             oriProxyQuery = getEntityManager().createNativeQuery(queryString, objectType);
-
-//            QueryImpl query = AopTargetUtils.getTarget(oriProxyQuery);
         } else {
             oriProxyQuery = getEntityManager().createNativeQuery(queryString);
 
-			query = AopTargetUtils.getTarget(oriProxyQuery);
-			//find generic type
-			ClassTypeInformation<?> ctif = ClassTypeInformation.from(objectType);
-			TypeInformation<?> actualType = ctif.getActualType();
-			if (actualType == null){
-			    actualType = ctif.getRawTypeInformation();
+            query = AopTargetUtils.getTarget(oriProxyQuery);
+            //find generic type
+            ClassTypeInformation<?> ctif = ClassTypeInformation.from(objectType);
+            TypeInformation<?> actualType = ctif.getActualType();
+            if (actualType == null) {
+                actualType = ctif.getRawTypeInformation();
             }
-			Class<?> genericType = actualType.getType();
-			if (genericType != null && genericType != Void.class) {
-				QueryBuilder.transform(query.getHibernateQuery(), genericType);
-			}
-		}
+            Class<?> genericType = actualType.getType();
+            if (genericType != null && genericType != Void.class) {
+                QueryBuilder.transform(query.getHibernateQuery(), genericType);
+            }
+        }
         //return the original proxy query, for a series of JPA actions, e.g.:close em.
         return oriProxyQuery;
     }
@@ -134,6 +131,7 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected TypedQuery<Long> doCreateCountQuery(Object[] values) {
         TypedQuery query = (TypedQuery) getEntityManager()
                 .createNativeQuery(QueryBuilder.toCountQuery(getQuery(values)));
@@ -141,12 +139,11 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
         return query;
     }
 
-    public Query bind(Query query, Object[] values) {
-    	//get proxy target if exist.
+    private Query bind(Query query, Object[] values) {
+        //get proxy target if exist.
         //must be hibernate QueryImpl
-        QueryImpl targetQuery = AopTargetUtils.getTarget(query);
-
-		SQLQuery sqlQuery = (SQLQuery) targetQuery.getHibernateQuery();
+        HibernateQuery targetQuery = AopTargetUtils.getTarget(query);
+        org.hibernate.Query sqlQuery = targetQuery.getHibernateQuery();
         Map<String, Object> params = getParams(values);
         if (!CollectionUtils.isEmpty(params)) {
             QueryBuilder.setParams(sqlQuery, params);
@@ -154,7 +151,7 @@ public class FreemarkerTemplateQuery extends AbstractJpaQuery {
         return query;
     }
 
-    protected boolean canBindParameter(Parameter parameter) {
+    private boolean canBindParameter(Parameter parameter) {
         return parameter.isBindable();
     }
 }

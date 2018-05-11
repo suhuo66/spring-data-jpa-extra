@@ -84,7 +84,7 @@ public class QueryBuilder {
         return wrapCountQuery(cleanOrderBy(query));
     }
 
-    public static void setParams(SQLQuery query, Object beanOrMap) {
+    public static void setParams(Query query, Object beanOrMap) {
         String[] nps = query.getNamedParameters();
         if (nps != null) {
             Map<String, Object> params = toParams(beanOrMap);

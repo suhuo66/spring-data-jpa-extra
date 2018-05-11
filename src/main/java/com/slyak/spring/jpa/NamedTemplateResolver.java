@@ -10,5 +10,5 @@ import java.util.Iterator;
  * @author stormning on 2016/12/17.
  */
 public interface NamedTemplateResolver {
-	Iterator<Void> doInTemplateResource(Resource resource, final NamedTemplateCallback callback) throws Exception;
+    Iterator<Void> doInTemplateResource(Resource resource, final NamedTemplateCallback callback) throws Exception;
 }

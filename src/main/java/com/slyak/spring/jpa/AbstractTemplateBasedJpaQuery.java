@@ -25,8 +25,9 @@ public class AbstractTemplateBasedJpaQuery extends AbstractJpaQuery {
 	/**
 	 * Creates a new {@link AbstractJpaQuery} from the given {@link JpaQueryMethod}.
 	 *
-	 * @param method
-	 * @param em
+	 * @param method jpa query method
+	 * @param em entity manager
+	 * @param context query template context
 	 */
 	public AbstractTemplateBasedJpaQuery(JpaQueryMethod method, EntityManager em, QueryTemplateContext context) {
 		super(method, em);

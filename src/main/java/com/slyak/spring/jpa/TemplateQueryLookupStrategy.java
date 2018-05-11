@@ -22,33 +22,31 @@ import java.lang.reflect.Method;
  */
 public class TemplateQueryLookupStrategy implements QueryLookupStrategy {
 
-	private final EntityManager entityManager;
+    private final EntityManager entityManager;
 
-	private QueryLookupStrategy jpaQueryLookupStrategy;
+    private QueryLookupStrategy jpaQueryLookupStrategy;
 
-	private QueryExtractor extractor;
+    private QueryExtractor extractor;
 
-	public TemplateQueryLookupStrategy(EntityManager entityManager, Key key, QueryExtractor extractor,
-			EvaluationContextProvider evaluationContextProvider) {
-		this.jpaQueryLookupStrategy = JpaQueryLookupStrategy
-				.create(entityManager, key, extractor, evaluationContextProvider);
-		this.extractor = extractor;
-		this.entityManager = entityManager;
-	}
+    public TemplateQueryLookupStrategy(EntityManager entityManager, Key key, QueryExtractor extractor,
+                                       EvaluationContextProvider evaluationContextProvider) {
+        this.jpaQueryLookupStrategy = JpaQueryLookupStrategy.create(entityManager, key, extractor, evaluationContextProvider);
+        this.extractor = extractor;
+        this.entityManager = entityManager;
+    }
 
-	public static QueryLookupStrategy create(EntityManager entityManager, Key key, QueryExtractor extractor,
-			EvaluationContextProvider evaluationContextProvider) {
-		return new TemplateQueryLookupStrategy(entityManager, key, extractor, evaluationContextProvider);
-	}
+    public static QueryLookupStrategy create(EntityManager entityManager, Key key, QueryExtractor extractor,
+                                             EvaluationContextProvider evaluationContextProvider) {
+        return new TemplateQueryLookupStrategy(entityManager, key, extractor, evaluationContextProvider);
+    }
 
-	@Override
-	public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,
-			NamedQueries namedQueries) {
-		if (method.getAnnotation(TemplateQuery.class) == null) {
-			return jpaQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
-		}
-		else {
-			return new FreemarkerTemplateQuery(new JpaQueryMethod(method, metadata, factory, extractor), entityManager);
-		}
-	}
+    @Override
+    public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,
+                                        NamedQueries namedQueries) {
+        if (method.getAnnotation(TemplateQuery.class) == null) {
+            return jpaQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
+        } else {
+            return new FreemarkerTemplateQuery(new JpaQueryMethod(method, metadata, factory, extractor), entityManager);
+        }
+    }
 }

@@ -113,6 +113,8 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
      * (with the mapped class specified only once).
      *
      * @param mappedClass the class that each row should be mapped to
+     * @param <T> class type
+     * @return instance
      */
     public static <T> BeanPropertyRowMapper<T> newInstance(Class<T> mappedClass) {
         BeanPropertyRowMapper<T> newInstance = new BeanPropertyRowMapper<T>();
@@ -167,6 +169,7 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
 
     /**
      * Get the class that we are mapping to.
+     * @return mapped class
      */
     public final Class<T> getMappedClass() {
         return this.mappedClass;
@@ -174,6 +177,7 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
 
     /**
      * Set the class that each row should be mapped to.
+     * @param mappedClass mapped class
      */
     public void setMappedClass(Class<T> mappedClass) {
         if (this.mappedClass == null) {
@@ -189,6 +193,7 @@ public class BeanTransformerAdapter<T> implements ResultTransformer {
     /**
      * Return whether we're strictly validating that all bean properties have been
      * mapped from corresponding database fields.
+     * @return flag
      */
     public boolean isCheckFullyPopulated() {
         return this.checkFullyPopulated;

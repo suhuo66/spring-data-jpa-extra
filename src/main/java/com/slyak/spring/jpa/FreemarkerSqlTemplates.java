@@ -31,183 +31,174 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FreemarkerSqlTemplates implements ResourceLoaderAware, InitializingBean {
 
-	private static Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+    private static Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
-	private static StringTemplateLoader sqlTemplateLoader = new StringTemplateLoader();
+    private static StringTemplateLoader sqlTemplateLoader = new StringTemplateLoader();
 
-	static {
-		cfg.setTemplateLoader(sqlTemplateLoader);
-	}
+    static {
+        cfg.setTemplateLoader(sqlTemplateLoader);
+    }
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
-	private String encoding = "UTF-8";
+    private String encoding = "UTF-8";
 
-	@PersistenceContext
-	private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-	private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<String, Long>();
+    private Map<String, Long> lastModifiedCache = new ConcurrentHashMap<>();
 
-	private Map<String, List<Resource>> sqlResources = new ConcurrentHashMap<String, List<Resource>>();
+    private Map<String, List<Resource>> sqlResources = new ConcurrentHashMap<>();
 
-	private String templateLocation = "classpath:/sqls";
+    private String templateLocation = "classpath:/sqls";
 
-	private String templateBasePackage = "**";
+    private String templateBasePackage = "**";
 
-	private ResourceLoader resourceLoader;
+    private ResourceLoader resourceLoader;
 
-	private String suffix = ".xml";
+    private String suffix = ".xml";
 
-	private Map<String, NamedTemplateResolver> suffixResolvers = new HashMap<String, NamedTemplateResolver>();
+    private Map<String, NamedTemplateResolver> suffixResolvers = new HashMap<>();
 
-	{
-		suffixResolvers.put(".sftl", new SftlNamedTemplateResolver());
-	}
+    {
+        suffixResolvers.put(".sftl", new SftlNamedTemplateResolver());
+    }
 
-	public String process(String entityName, String methodName, Map<String, Object> model) {
-		reloadIfPossible(entityName);
-		try {
-			StringWriter writer = new StringWriter();
-			cfg.getTemplate(getTemplateKey(entityName, methodName), encoding).process(model, writer);
-			return writer.toString();
-		}
-		catch (Exception e) {
-			logger.error("process template error. Entity name: " + entityName + " methodName:" + methodName, e);
-			return StringUtils.EMPTY;
-		}
-	}
+    public String process(String entityName, String methodName, Map<String, Object> model) {
+        reloadIfPossible(entityName);
+        try {
+            StringWriter writer = new StringWriter();
+            cfg.getTemplate(getTemplateKey(entityName, methodName), encoding).process(model, writer);
+            return writer.toString();
+        } catch (Exception e) {
+            logger.error("process template error. Entity name: " + entityName + " methodName:" + methodName, e);
+            return StringUtils.EMPTY;
+        }
+    }
 
-	private String getTemplateKey(String entityName, String methodName) {
-		return entityName + ":" + methodName;
-	}
+    private String getTemplateKey(String entityName, String methodName) {
+        return entityName + ":" + methodName;
+    }
 
-	private void reloadIfPossible(final String entityName) {
-		try {
-			Long lastModified = lastModifiedCache.get(entityName);
-			List<Resource> resourceList = sqlResources.get(entityName);
+    private void reloadIfPossible(final String entityName) {
+        try {
+            Long lastModified = lastModifiedCache.get(entityName);
+            List<Resource> resourceList = sqlResources.get(entityName);
 
-			long newLastModified = 0;
-			for (Resource resource : resourceList) {
-				if (newLastModified == 0) {
-					newLastModified = resource.lastModified();
-				}
-				else {
-					//get the last modified.
-					newLastModified = newLastModified > resource.lastModified() ?
-							newLastModified : resource.lastModified();
-				}
-			}
+            long newLastModified = 0;
+            for (Resource resource : resourceList) {
+                if (newLastModified == 0) {
+                    newLastModified = resource.lastModified();
+                } else {
+                    //get the last modified.
+                    newLastModified = newLastModified > resource.lastModified() ?
+                            newLastModified : resource.lastModified();
+                }
+            }
 
-			//check modified for cache.
-			if (lastModified == null || newLastModified > lastModified) {
-				lastModifiedCache.put(entityName, newLastModified);
+            //check modified for cache.
+            if (lastModified == null || newLastModified > lastModified) {
+                lastModifiedCache.put(entityName, newLastModified);
 
-				//process template.
-				for (Resource resource : resourceList) {
-					Iterator<Void> iterator = suffixResolvers.get(suffix)
-							.doInTemplateResource(resource, new NamedTemplateCallback() {
-								@Override
-								public void process(String templateName, String content) {
-									String key = getTemplateKey(entityName, templateName);
-									Object src = sqlTemplateLoader.findTemplateSource(key);
-									if (src != null) {
-										logger.warn("found duplicate template key, will replace the value, key:" + key);
-									}
-									sqlTemplateLoader
-											.putTemplate(getTemplateKey(entityName, templateName), content);
-								}
-							});
-					while (iterator.hasNext()) {
-						iterator.next();
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-			logger.error(e);
-		}
-	}
+                //process template.
+                for (Resource resource : resourceList) {
+                    Iterator<Void> iterator = suffixResolvers.get(suffix)
+                            .doInTemplateResource(resource, (templateName, content) -> {
+                                String key = getTemplateKey(entityName, templateName);
+                                Object src = sqlTemplateLoader.findTemplateSource(key);
+                                if (src != null) {
+                                    logger.warn("found duplicate template key, will replace the value, key:" + key);
+                                }
+                                sqlTemplateLoader
+                                        .putTemplate(getTemplateKey(entityName, templateName), content);
+                            });
+                    while (iterator.hasNext()) {
+                        iterator.next();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e);
+        }
+    }
 
-	@Override
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-		XmlNamedTemplateResolver xmlNamedTemplateResolver = new XmlNamedTemplateResolver(resourceLoader);
-		xmlNamedTemplateResolver.setEncoding(encoding);
-		this.suffixResolvers.put(".xml", xmlNamedTemplateResolver);
-	}
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+        XmlNamedTemplateResolver xmlNamedTemplateResolver = new XmlNamedTemplateResolver(resourceLoader);
+        xmlNamedTemplateResolver.setEncoding(encoding);
+        this.suffixResolvers.put(".xml", xmlNamedTemplateResolver);
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Set<String> names = new HashSet<String>();
-		Set<EntityType<?>> entities = em.getMetamodel().getEntities();
-		for (EntityType<?> entity : entities) {
-			names.add(entity.getName());
-		}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Set<String> names = new HashSet<>();
+        Set<EntityType<?>> entities = em.getMetamodel().getEntities();
+        for (EntityType<?> entity : entities) {
+            names.add(entity.getName());
+        }
 
-		String suffixPattern = "/**/*" + suffix;
+        String suffixPattern = "/**/*" + suffix;
 
-		if (!names.isEmpty()) {
-			String pattern;
-			if (StringUtils.isNotBlank(templateBasePackage)) {
-				pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-						ClassUtils.convertClassNameToResourcePath(templateBasePackage) + suffixPattern;
+        if (!names.isEmpty()) {
+            String pattern;
+            if (StringUtils.isNotBlank(templateBasePackage)) {
+                pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+                        ClassUtils.convertClassNameToResourcePath(templateBasePackage) + suffixPattern;
 
-				loadPatternResource(names, pattern);
-			}
-			if (StringUtils.isNotBlank(templateLocation)) {
-				pattern = templateLocation.contains(suffix) ? templateLocation : templateLocation + suffixPattern;
-				try {
-					loadPatternResource(names, pattern);
-				}
-				catch (FileNotFoundException e) {
-					if ("classpath:/sqls".equals(templateLocation)) {
-						//warn: default value
-						logger.warn("templateLocation[" + templateLocation + "] not exist!");
-						logger.warn(e.getMessage());
-					}
-					else {
-						//throw: custom value.
-						throw e;
-					}
-				}
-			}
-		}
-	}
+                loadPatternResource(names, pattern);
+            }
+            if (StringUtils.isNotBlank(templateLocation)) {
+                pattern = templateLocation.contains(suffix) ? templateLocation : templateLocation + suffixPattern;
+                try {
+                    loadPatternResource(names, pattern);
+                } catch (FileNotFoundException e) {
+                    if ("classpath:/sqls".equals(templateLocation)) {
+                        //warn: default value
+                        logger.warn("templateLocation[" + templateLocation + "] not exist!");
+                        logger.warn(e.getMessage());
+                    } else {
+                        //throw: custom value.
+                        throw e;
+                    }
+                }
+            }
+        }
+    }
 
-	private void loadPatternResource(Set<String> names, String pattern) throws IOException {
-		PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(
-				resourceLoader);
-		Resource[] resources = resourcePatternResolver.getResources(pattern);
-		for (Resource resource : resources) {
-			String resourceName = resource.getFilename().replace(suffix, "");
-			if (names.contains(resourceName)) {
-				//allow multi resource.
-				List<Resource> resourceList = null;
-				if (sqlResources.containsKey(resourceName)) {
-					resourceList = sqlResources.get(resourceName);
-				}
-				else {
-					resourceList = new LinkedList<Resource>();
-					sqlResources.put(resourceName, resourceList);
-				}
-				resourceList.add(resource);
-			}
-		}
-	}
+    private void loadPatternResource(Set<String> names, String pattern) throws IOException {
+        PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(
+                resourceLoader);
+        Resource[] resources = resourcePatternResolver.getResources(pattern);
+        for (Resource resource : resources) {
+            String resourceName = resource.getFilename().replace(suffix, "");
+            if (names.contains(resourceName)) {
+                //allow multi resource.
+                List<Resource> resourceList;
+                if (sqlResources.containsKey(resourceName)) {
+                    resourceList = sqlResources.get(resourceName);
+                } else {
+                    resourceList = new LinkedList<>();
+                    sqlResources.put(resourceName, resourceList);
+                }
+                resourceList.add(resource);
+            }
+        }
+    }
 
-	public void setTemplateLocation(String templateLocation) {
-		this.templateLocation = templateLocation;
-	}
+    public void setTemplateLocation(String templateLocation) {
+        this.templateLocation = templateLocation;
+    }
 
-	public void setTemplateBasePackage(String templateBasePackage) {
-		this.templateBasePackage = templateBasePackage;
-	}
+    public void setTemplateBasePackage(String templateBasePackage) {
+        this.templateBasePackage = templateBasePackage;
+    }
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
-	}
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
 }

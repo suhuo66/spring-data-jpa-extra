@@ -18,21 +18,21 @@ import java.io.Serializable;
  * @version V1.0, 2015/8/8.
  */
 public class GenericJpaRepositoryFactoryBean<R extends JpaRepository<T, I>, T, I extends Serializable>
-		extends JpaRepositoryFactoryBean<R, T, I> implements ApplicationContextAware {
+        extends JpaRepositoryFactoryBean<R, T, I> implements ApplicationContextAware {
 
-	public GenericJpaRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
-		super(repositoryInterface);
-	}
+    public GenericJpaRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
+        super(repositoryInterface);
+    }
 
-	@Override
-	protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
-		RepositoryFactorySupport factorySupport = new GenericJpaRepositoryFactory(entityManager);
-		factorySupport.setRepositoryBaseClass(GenericJpaRepositoryImpl.class);
-		return factorySupport;
-	}
+    @Override
+    protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
+        RepositoryFactorySupport factorySupport = new GenericJpaRepositoryFactory(entityManager);
+        factorySupport.setRepositoryBaseClass(GenericJpaRepositoryImpl.class);
+        return factorySupport;
+    }
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		ContextHolder.appContext = applicationContext;
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ContextHolder.appContext = applicationContext;
+    }
 }

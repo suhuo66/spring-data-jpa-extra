@@ -25,53 +25,53 @@ import java.util.List;
  * @author stormning on 2016/12/17.
  */
 public class XmlNamedTemplateResolver implements NamedTemplateResolver {
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private String encoding = "UTF-8";
+    private String encoding = "UTF-8";
 
-	private DocumentLoader documentLoader = new DefaultDocumentLoader();
+    private DocumentLoader documentLoader = new DefaultDocumentLoader();
 
-	private EntityResolver entityResolver;
+    private EntityResolver entityResolver;
 
-	private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
+    private ErrorHandler errorHandler = new SimpleSaxErrorHandler(logger);
 
-	public XmlNamedTemplateResolver(ResourceLoader resourceLoader) {
-		this.entityResolver = new ResourceEntityResolver(resourceLoader);
-	}
+    public XmlNamedTemplateResolver(ResourceLoader resourceLoader) {
+        this.entityResolver = new ResourceEntityResolver(resourceLoader);
+    }
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
-	@Override
-	public Iterator<Void> doInTemplateResource(Resource resource, final NamedTemplateCallback callback)
-			throws Exception {
-		InputSource inputSource = new InputSource(resource.getInputStream());
-		inputSource.setEncoding(encoding);
-		Document doc = documentLoader.loadDocument(inputSource, entityResolver, errorHandler,
-				XmlValidationModeDetector.VALIDATION_XSD, false);
-		final List<Element> sqes = DomUtils.getChildElementsByTagName(doc.getDocumentElement(), "sql");
+    @Override
+    public Iterator<Void> doInTemplateResource(Resource resource, final NamedTemplateCallback callback)
+            throws Exception {
+        InputSource inputSource = new InputSource(resource.getInputStream());
+        inputSource.setEncoding(encoding);
+        Document doc = documentLoader.loadDocument(inputSource, entityResolver, errorHandler,
+                XmlValidationModeDetector.VALIDATION_XSD, false);
+        final List<Element> sqes = DomUtils.getChildElementsByTagName(doc.getDocumentElement(), "sql");
 
-		return new Iterator<Void>() {
-			int index = 0, total = sqes.size();
+        return new Iterator<Void>() {
+            int index = 0, total = sqes.size();
 
-			@Override
-			public boolean hasNext() {
-				return index < total;
-			}
+            @Override
+            public boolean hasNext() {
+                return index < total;
+            }
 
-			@Override
-			public Void next() {
-				Element sqle = sqes.get(index);
-				callback.process(sqle.getAttribute("name"), sqle.getTextContent());
-				index++;
-				return null;
-			}
+            @Override
+            public Void next() {
+                Element sqle = sqes.get(index);
+                callback.process(sqle.getAttribute("name"), sqle.getTextContent());
+                index++;
+                return null;
+            }
 
-			@Override
-			public void remove() {
-				//ignore
-			}
-		};
-	}
+            @Override
+            public void remove() {
+                //ignore
+            }
+        };
+    }
 }
