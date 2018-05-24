@@ -125,3 +125,7 @@ Entity assemblers can assembler entity with other entities, such as one to many 
 
 ## How to use in old version ( <2.0 )
 <a href="./README-1.0.md">old version guide</a>
+
+其实mybatis和jpa都各有优缺点，我的想法弥补其缺点，比如jpa的复杂条件查询和返回对象支持力度问题（虽然jpa复杂查询可以用SPEL或者Specification来完成，但是还是太难用了）。我对JPA做了下扩展，结合freemarker模版来做动态Sql这块，做了很多项目了，貌似还是挺受欢迎的。
+
+
